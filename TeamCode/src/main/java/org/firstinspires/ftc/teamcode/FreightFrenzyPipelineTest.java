@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -101,12 +101,20 @@ public class FreightFrenzyPipelineTest extends LinearOpMode
             ------------------------------------
          */
         static final Scalar YELLOW = new Scalar(255, 255, 0);
-        static final Point REGION1_TOPLEFT_POINT = new Point(109,98); // these are placeholders,  find actual values
-        static final int REGION_WIDTH = 20;
-        static final int REGION_HEIGHT = 20;
+        static final Point REGION1_TOPLEFT_POINT = new Point(0,160);
+        static final Point REGION2_TOPLEFT_POINT = new Point(120,160);
+        static final Point REGION3_TOPLEFT_POINT = new Point(280,160); // these are placeholders,  find actual values
+        static final int REGION_WIDTH = 30;
+        static final int REGION_HEIGHT = 30;
         Point region1_pointA = new Point(   REGION1_TOPLEFT_POINT.x, REGION1_TOPLEFT_POINT.y );
         Point region1_pointB = new Point(REGION1_TOPLEFT_POINT.x + REGION_WIDTH, REGION1_TOPLEFT_POINT.y + REGION_HEIGHT);
+        Point region2_pointA = new Point(   REGION2_TOPLEFT_POINT.x, REGION2_TOPLEFT_POINT.y );
+        Point region2_pointB = new Point(REGION2_TOPLEFT_POINT.x + REGION_WIDTH, REGION2_TOPLEFT_POINT.y + REGION_HEIGHT);
+        Point region3_pointA = new Point(   REGION3_TOPLEFT_POINT.x, REGION3_TOPLEFT_POINT.y );
+        Point region3_pointB = new Point(REGION3_TOPLEFT_POINT.x + REGION_WIDTH, REGION3_TOPLEFT_POINT.y + REGION_HEIGHT);
         Mat region1_Cb;
+        Mat region2_Cb;
+        Mat region3_Cb;
         Mat YCrCb = new Mat();
         Mat Cb = new Mat();
 
@@ -144,8 +152,8 @@ public class FreightFrenzyPipelineTest extends LinearOpMode
              * reverse also holds true.
              */
             region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
-                /*`region2_Cb = Cb.submat(new Rect(region2_pointA, region2_pointB));
-                region3_Cb = Cb.submat(new Rect(region3_pointA, region3_pointB)); */
+            region2_Cb = Cb.submat(new Rect(region2_pointA, region2_pointB));
+            region3_Cb = Cb.submat(new Rect(region3_pointA, region3_pointB));
         }
 
         @Override
@@ -199,8 +207,8 @@ public class FreightFrenzyPipelineTest extends LinearOpMode
              * at index 2 here.
              */
             pixAvg = (int) Core.mean(region1_Cb).val[0];
-            int FOURRINGS = 128; // placeholder value - value of avg with 4 rings
-            int ONERING = 120; // placeholder value - value of avg with 1 ring
+            int BarTWO = 130; // placeholder value - value of avg with 4 rings
+            int BarTHREE = 105; // placeholder value - value of avg with 1 ring
 
 
 
@@ -208,11 +216,11 @@ public class FreightFrenzyPipelineTest extends LinearOpMode
 
             /* figure out which sample region that value was from
              */
-            if (pixAvg > FOURRINGS){
+            if (pixAvg < BarTHREE){
                 // 4 rings
                 number = Barcode.THREE;
             }
-            else if(pixAvg > ONERING){
+            else if(pixAvg < BarTWO){
                 // Barcode 2
                 number = Barcode.TWO;
             }
