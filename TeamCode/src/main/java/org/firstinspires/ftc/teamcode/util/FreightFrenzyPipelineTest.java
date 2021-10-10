@@ -16,7 +16,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 @Autonomous
-public class TechiesOpenCVTest extends LinearOpMode
+public class FreightFrenzyPipelineTest extends LinearOpMode
 {
     OpenCvCamera webcam;
     FreightFrenzyPipeline pipeline;
