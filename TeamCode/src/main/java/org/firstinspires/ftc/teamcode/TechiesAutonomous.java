@@ -46,7 +46,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import java.util.List;
 
 
-@Autonomous(name="Pushbot: Auto Drive By Encoder", group="Pushbot")
+@Autonomous(name="Techies Autonomous", group="Pushbot")
 //@Disabled
 public class TechiesAutonomous extends LinearOpMode {
 
@@ -70,9 +70,7 @@ public class TechiesAutonomous extends LinearOpMode {
     private static final String VUFORIA_KEY =
             " AbfemMf/////AAABmVQ5LwVH3Umfv+Oiv7oNSvcdOBa+ogwEc69mgH/qFNgbn1NXBJsX4J5R6N4SYojjxFB6eHjdTHaT3i9ZymELzgaFrPziL5B/TX2/dkxnIK5dcOjLHOZu2K3jVPYciJnwj20ZmRXSN46Y4uMdzWSJ3X1wgKovNQzZvx+7dljIonRJfLjSF5aSuoTDqEkdcsGTJ92J7jgc5jN53Vml3rAI+qPUTT8qpI8T1enV6NYublcUMpofpovmHsH9kvI+U1h9Rc8cXwbGPlr3PVoKQOwuZA0Y98Jywey6URYTswzpbMw8cWu4PMisB2ujpf0VEjiV6jjofr3OVRj6r5lEJZsnElY2mOhXdgVqJndvXYvCSpyI";
     private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
-    private static final String[] LABELS = {
-            "Duck"
-    };
+    private static final String LABEL_FIRST_ELEMENT = "Duck";
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
     private String Level;
@@ -97,43 +95,59 @@ public class TechiesAutonomous extends LinearOpMode {
         int targetZone = determineZoneLevel();
         telemetry.addData("Zone Level", targetZone);
 
-
+        Drive_forward(targetZone);
         shutDownCamera();
-        encoderDrive(DRIVE_SPEED, 48, 48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        encoderDrive(TURN_SPEED, 12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
 
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
 
+    private void Drive_forward(int targetZone) {
+        if (LEVEL_ZONE_1 == targetZone) {
+            encoderDrive(DRIVE_SPEED, -10, -10, -10, -10, 5.0);
 
+        } else if (LEVEL_ZONE_2 == targetZone) {
+            encoderDrive(DRIVE_SPEED, -51, -51, -51, -51, 5.0);
+
+
+        } else if (LEVEL_ZONE_3 == targetZone) {
+            encoderDrive(DRIVE_SPEED, 10, 10, 10, 10, 5.0);
+
+
+        }
+
+    }
 
 
     public void encoderDrive(double speed,
-                             double leftInches, double rightInches,
+                             double leftInches, double rightInches, double leftBackInches, double rightBackInches,
                              double timeoutS) {
         int newLeftTarget;
         int newRightTarget;
+        int newLeftBackTarget;
+        int newRightBackTarget;
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
-
             // Determine new target position, and pass to motor controller
             newLeftTarget = robot.leftDrive.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
             newRightTarget = robot.rightDrive.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
+            newLeftBackTarget = robot.leftBack.getCurrentPosition() + (int) (leftBackInches * COUNTS_PER_INCH);
+            newRightBackTarget = robot.rightBack.getCurrentPosition() + (int) (rightBackInches * COUNTS_PER_INCH);
+
             robot.leftDrive.setTargetPosition(newLeftTarget);
             robot.rightDrive.setTargetPosition(newRightTarget);
-
+            robot.leftBack.setTargetPosition(newLeftBackTarget);
+            robot.rightBack.setTargetPosition(newRightBackTarget);
             // Turn On RUN_TO_POSITION
-            robot.leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
+            setEncoder(DcMotor.RunMode.RUN_TO_POSITION);
             // reset the timeout time and start motion.
             runtime.reset();
             robot.leftDrive.setPower(Math.abs(speed));
             robot.rightDrive.setPower(Math.abs(speed));
+            robot.leftBack.setPower(Math.abs(speed));
+            robot.rightBack.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -143,25 +157,37 @@ public class TechiesAutonomous extends LinearOpMode {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
-                    (robot.leftDrive.isBusy() && robot.rightDrive.isBusy())) {
+                    (robot.leftDrive.isBusy() && robot.rightDrive.isBusy() &&
+                            robot.leftBack.isBusy() && robot.rightBack.isBusy())) {
 
                 // Display it for the driver.
-                telemetry.addData("Path1", "Running to %7d :%7d", newLeftTarget, newRightTarget);
+                telemetry.addData("Path1", "Running to %7d :%7d", newLeftTarget,
+                        newRightTarget, newLeftBackTarget, newRightBackTarget);
                 telemetry.addData("Path2", "Running at %7d :%7d",
                         robot.leftDrive.getCurrentPosition(),
-                        robot.rightDrive.getCurrentPosition());
+                        robot.rightDrive.getCurrentPosition(),
+                        robot.leftBack.getCurrentPosition(),
+                        robot.rightBack.getCurrentPosition());
                 telemetry.update();
             }
 
             // Stop all motion;
             robot.leftDrive.setPower(0);
             robot.rightDrive.setPower(0);
+            robot.leftBack.setPower(0);
+            robot.rightBack.setPower(0);
 
             // Turn off RUN_TO_POSITION
-            robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+            setEncoder(DcMotor.RunMode.RUN_USING_ENCODER);
+            //  sleep(250);   // optional pause after each move
         }
+    }
+
+    private void setEncoder(DcMotor.RunMode stopAndResetEncoder) {
+        robot.leftDrive.setMode(stopAndResetEncoder);
+        robot.rightDrive.setMode(stopAndResetEncoder);
+        robot.leftBack.setMode(stopAndResetEncoder);
+        robot.rightBack.setMode(stopAndResetEncoder);
     }
 
     private void initVuforia() {
@@ -187,7 +213,7 @@ public class TechiesAutonomous extends LinearOpMode {
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 320;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT);
     }
     protected void activateCamera() {
         /**
@@ -226,21 +252,18 @@ public class TechiesAutonomous extends LinearOpMode {
     protected int determineZoneLevel() {
         int targetZone = LEVEL_ZONE_DEFAULT;
         if (opModeIsActive()) {
-            while (opModeIsActive()) {
-                if (tfod != null) {
+            if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
                         telemetry.addData("# Object Detected", updatedRecognitions.size());
-
                         // step through the list of recognitions and display boundary info.
-                        int i = 0;
                         for (Recognition recognition : updatedRecognitions) {
-                            telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                            telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                            telemetry.addData(String.format("label (%d)"), recognition.getLabel());
+                            telemetry.addData(String.format("  left,top (%d)"), "%.03f , %.03f",
                                     recognition.getLeft(), recognition.getTop());
-                            telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                            telemetry.addData(String.format("  right,bottom (%d)"), "%.03f , %.03f",
                                     recognition.getRight(), recognition.getBottom());
                             Double angle = Double.valueOf( recognition.estimateAngleToObject(AngleUnit.DEGREES));
                             telemetry.addData(String.format("  Angle: "), angle);
@@ -264,14 +287,12 @@ public class TechiesAutonomous extends LinearOpMode {
 
                             }
 
-
-                            i++;
                         }
                         telemetry.update();
                     }
                 }
             }
-        }
+
 
         return targetZone;
     }
