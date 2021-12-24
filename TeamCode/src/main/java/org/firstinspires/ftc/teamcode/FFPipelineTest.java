@@ -15,7 +15,9 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.easyopencv.OpenCvWebcam;
 
+@Autonomous
 public class FFPipelineTest extends LinearOpMode {
     OpenCvCamera webcam;
     FFPipeline pipeline;
@@ -39,9 +41,8 @@ public class FFPipelineTest extends LinearOpMode {
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
         // out when the RC activity is in portrait. We do our actual image processing assuming
         // landscape orientation, though.
-        webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        webcam.openCameraDeviceAsync(new OpenCvWebcam.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
@@ -63,11 +64,11 @@ public class FFPipelineTest extends LinearOpMode {
         while (opModeIsActive())
         {
             telemetry.addData("Freight Location: ", pipeline.getAnalysis());
-
+            telemetry.addData("Max Average: ", pipeline.getMaximum());
             telemetry.update();
 
             // Don't burn CPU cycles busy-looping in this sample
-            sleep(50);
+            sleep(40);
         }
     }
 }
@@ -75,8 +76,7 @@ class  FFPipeline extends OpenCvPipeline {
     /*
      * An enum to define the position
      */
-    public enum FreightLocation
-    {
+    public enum FreightLocation {
         ONE,
         TWO,
         THREE
@@ -87,13 +87,13 @@ class  FFPipeline extends OpenCvPipeline {
      */
     static final Scalar BLUE = new Scalar(0, 0, 255);
     static final Scalar GREEN = new Scalar(0, 255, 0);
-
+    static final Scalar YELLOW = new Scalar(255, 255, 0);
     /*
      * The core values which define the location and size of the sample regions
      */
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0,160);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(120,160);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(240,160);
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 105);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(130, 105);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(250, 105);
     static final int REGION_WIDTH = 30;
     static final int REGION_HEIGHT = 30;
 
@@ -139,6 +139,8 @@ class  FFPipeline extends OpenCvPipeline {
     Mat region1_Cb, region2_Cb, region3_Cb;
     Mat YCrCb = new Mat();
     Mat Cb = new Mat();
+    Mat Y = new Mat();
+    Mat Cr = new Mat();
     int avg1, avg2, avg3;
 
     // Volatile since accessed by OpMode thread w/o synchronization
@@ -148,15 +150,25 @@ class  FFPipeline extends OpenCvPipeline {
      * This function takes the RGB frame, converts to YCrCb,
      * and extracts the Cb channel to the 'Cb' variable
      */
-    void inputToCb(Mat input)
-    {
+    void inputToCb(Mat input) {
         Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
         Core.extractChannel(YCrCb, Cb, 2);
     }
 
+    void inputToY(Mat input) {
+        Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
+        Core.extractChannel(YCrCb, Y, 1);
+    }
+
+    void inputToCr(Mat input) {
+        Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
+        Core.extractChannel(YCrCb, Cr, 3);
+    }
+
+    int maximum = 0;
+
     @Override
-    public void init(Mat firstFrame)
-    {
+    public void init(Mat firstFrame) {
         /*
          * We need to call this in order to make sure the 'Cb'
          * object is initialized, so that the submats we make
@@ -179,8 +191,7 @@ class  FFPipeline extends OpenCvPipeline {
     }
 
     @Override
-    public Mat processFrame(Mat input)
-    {
+    public Mat processFrame(Mat input) {
         /*
          * Overview of what we're doing:
          *
@@ -276,37 +287,7 @@ class  FFPipeline extends OpenCvPipeline {
          * Now that we found the max, we actually need to go and
          * figure out which sample region that value was from
          */
-        if(max == avg1) // Was it from region 1?
-        {
-            position = FreightLocation.ONE; // Record our analysis
-
-            /*
-             * Draw a solid rectangle on top of the chosen region.
-             * Simply a visual aid. Serves no functional purpose.
-             */
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    region1_pointA, // First point which defines the rectangle
-                    region1_pointB, // Second point which defines the rectangle
-                    GREEN, // The color the rectangle is drawn in
-                    -1); // Negative thickness means solid fill
-        }
-        else if(max == avg2) // Was it from region 2?
-        {
-            position = FreightLocation.TWO; // Record our analysis
-
-            /*
-             * Draw a solid rectangle on top of the chosen region.
-             * Simply a visual aid. Serves no functional purpose.
-             */
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    region2_pointA, // First point which defines the rectangle
-                    region2_pointB, // Second point which defines the rectangle
-                    GREEN, // The color the rectangle is drawn in
-                    -1); // Negative thickness means solid fill
-        }
-        else if(max == avg3) // Was it from region 3?
+        if (max == avg1) // Was it from region 1?
         {
             position = FreightLocation.THREE; // Record our analysis
 
@@ -318,7 +299,35 @@ class  FFPipeline extends OpenCvPipeline {
                     input, // Buffer to draw on
                     region3_pointA, // First point which defines the rectangle
                     region3_pointB, // Second point which defines the rectangle
-                    GREEN, // The color the rectangle is drawn in
+                    YELLOW, // The color the rectangle is drawn in
+                    -1); // Negative thickness means solid fill
+        } else if (max == avg2) // Was it from region 2?
+        {
+            position = FreightLocation.TWO; // Record our analysis
+
+            /*
+             * Draw a solid rectangle on top of the chosen region.
+             * Simply a visual aid. Serves no functional purpose.
+             */
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region2_pointA, // First point which defines the rectangle
+                    region2_pointB, // Second point which defines the rectangle
+                    YELLOW, // The color the rectangle is drawn in
+                    -1); // Negative thickness means solid fill
+        } else if (max == avg3) // Was it from region 3?
+        {
+            position = FreightLocation.ONE; // Record our analysis
+
+            /*
+             * Draw a solid rectangle on top of the chosen region.
+             * Simply a visual aid. Serves no functional purpose.
+             */
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region1_pointA, // First point which defines the rectangle
+                    region1_pointB, // Second point which defines the rectangle
+                    YELLOW, // The color the rectangle is drawn in
                     -1); // Negative thickness means solid fill
         }
 
@@ -327,15 +336,18 @@ class  FFPipeline extends OpenCvPipeline {
          * simply rendering the raw camera feed, because we called functions
          * to add some annotations to this buffer earlier up.
          */
+        maximum = max;
         return input;
     }
 
     /*
      * Call this from the OpMode thread to obtain the latest analysis
      */
-    public FreightLocation getAnalysis()
-    {
+    public FreightLocation getAnalysis() {
         return position;
     }
-}
+
+    public int getMaximum() {
+        return maximum;
+    }
 }

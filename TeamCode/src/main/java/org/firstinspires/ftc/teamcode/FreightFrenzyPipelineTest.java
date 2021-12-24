@@ -15,6 +15,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.easyopencv.OpenCvWebcam;
+
 @Autonomous
 public class FreightFrenzyPipelineTest extends LinearOpMode
 {
@@ -40,9 +42,8 @@ public class FreightFrenzyPipelineTest extends LinearOpMode
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
         // out when the RC activity is in portrait. We do our actual image processing assuming
         // landscape orientation, though.
-        webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        webcam.openCameraDeviceAsync(new OpenCvWebcam.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
@@ -207,8 +208,9 @@ public class FreightFrenzyPipelineTest extends LinearOpMode
              * at index 2 here.
              */
             pixAvg = (int) Core.mean(region1_Cb).val[0];
-            int BarTWO = 130; // placeholder value - value of avg with 4 rings
-            int BarTHREE = 105; // placeholder value - value of avg with 1 ring
+
+            int BarTWO = 137; // placeholder value - value of avg with 4 rings
+            int BarONE = 135; // placeholder value - value of avg with 1 ring
 
 
 
@@ -216,11 +218,11 @@ public class FreightFrenzyPipelineTest extends LinearOpMode
 
             /* figure out which sample region that value was from
              */
-            if (pixAvg < BarTHREE){
+            if (pixAvg >= BarONE){
                 // 4 rings
                 number = Barcode.THREE;
             }
-            else if(pixAvg < BarTWO){
+            else if(pixAvg >= BarTWO){
                 // Barcode 2
                 number = Barcode.TWO;
             }
