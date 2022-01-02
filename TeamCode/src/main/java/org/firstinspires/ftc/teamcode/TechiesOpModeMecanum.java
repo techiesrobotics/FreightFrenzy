@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -75,6 +76,8 @@ public class TechiesOpModeMecanum extends LinearOpMode {
             double backleftPower;
             double backrightPower;
 
+            //double bucket_position= 0;
+
             // Choose to drive using either Tank Mode, or POV Mode
             // Comment out the method that's not used.  The default below is POV.
 
@@ -104,7 +107,53 @@ public class TechiesOpModeMecanum extends LinearOpMode {
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+            //telemetry.addData("Bucket", " (%.2f),",bucket_position);
+
             telemetry.update();
+            if (gamepad1.right_bumper == true ) {
+                robot.intake.setPower(-1);
+            }
+            else {
+                robot.intake.setPower(0);
+            }
+            if (gamepad1.left_bumper == true ) {
+                robot.intake.setPower(1);
+            }
+            else {
+                robot.intake.setPower(0);
+            }
+
+            if (gamepad1.dpad_up == true ) {
+                robot.leftriser.setPower(-1);
+                robot.rightriser.setPower(-1);
+
+            }
+            else {
+                robot.leftriser.setPower(0);
+                robot.rightriser.setPower(0);
+
+            }
+            if (gamepad1.dpad_down == true ) {
+                robot.leftriser.setPower(-1);
+                robot.rightriser.setPower(-1);
+
+            }
+            else {
+                robot.leftriser.setPower(0);
+                robot.rightriser.setPower(0);
+
+            }
+            if (gamepad1.a == true) {
+                robot.leftBucket.setPosition(.3);
+                robot.rightBucket.setPosition(.3);
+            }
+            else if (gamepad1.b == true) {
+                robot.leftBucket.setDirection(Servo.Direction.REVERSE);
+                robot.rightBucket.setDirection(Servo.Direction.REVERSE);
+                robot.leftBucket.setPosition(0);
+                robot.rightBucket.setPosition(0);
+            }
+
         }
     }
 }
