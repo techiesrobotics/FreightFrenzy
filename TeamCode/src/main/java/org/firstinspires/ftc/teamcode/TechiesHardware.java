@@ -29,7 +29,9 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -63,6 +65,10 @@ public class TechiesHardware
     public DcMotor  rightriser    = null;
     public Servo    leftBucket    = null;
     public Servo    rightBucket   = null;
+    public CRServo   DuckMech  = null;
+    //public DcMotorEx testPIDmotor    = null;
+    public DcMotor testPIDmotor    = null;
+
 
 
     /* local OpMode members. */
@@ -83,23 +89,33 @@ public class TechiesHardware
         leftDrive  = hwMap.get(DcMotor.class, "frontleft");
         rightDrive = hwMap.get(DcMotor.class, "frontright");
         leftBack  = hwMap.get(DcMotor.class, "backleft");
-        rightBack    = hwMap.get(DcMotor.class, "backright");
-        intake    = hwMap.get(DcMotor.class, "intake");
-        leftriser    = hwMap.get(DcMotor.class, "leftriser");
-        rightriser    = hwMap.get(DcMotor.class, "rightriser");
+        //rightBack    = hwMap.get(DcMotor.class, "backright");
+        //intake    = hwMap.get(DcMotor.class, "intake");
+        //leftriser    = hwMap.get(DcMotor.class, "leftriser");
+        //rightriser    = hwMap.get(DcMotor.class, "rightriser");
+       // testPIDmotor    = hwMap.get(DcMotorEx.class, "PID");
+
+
+
+        testPIDmotor    = hwMap.get(DcMotor.class, "PID");
+
 
 
         leftBucket    = hwMap.get(Servo.class, "leftBucket");
         rightBucket   = hwMap.get(Servo.class, "rightBucket");
+        DuckMech   = hwMap.get(CRServo.class, "DuckMech");
+
 
 
         leftDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         rightDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         leftBack.setDirection(DcMotor.Direction.REVERSE);
-        rightBack.setDirection(DcMotor.Direction.FORWARD);
-        intake.setDirection(DcMotor.Direction.FORWARD);
-        leftriser.setDirection(DcMotor.Direction.FORWARD);
-        rightriser.setDirection(DcMotor.Direction.REVERSE);
+        //rightBack.setDirection(DcMotor.Direction.FORWARD);
+        //intake.setDirection(DcMotor.Direction.FORWARD);
+        //leftriser.setDirection(DcMotor.Direction.FORWARD);
+        //rightriser.setDirection(DcMotor.Direction.REVERSE);
+        testPIDmotor.setDirection(DcMotor.Direction.FORWARD);
+
 
         leftBucket.setPosition(0);
         rightBucket.setPosition(0);
@@ -111,10 +127,13 @@ public class TechiesHardware
         leftDrive.setPower(0.0);
         rightDrive.setPower(0.0);
         leftBack.setPower(0.0);
-        rightBack.setPower(0.0);
-        intake.setPower(0.0);
-        leftriser.setPower(0.0);
-        rightriser.setPower(0.0);
+        //rightBack.setPower(0.0);
+        //intake.setPower(0.0);
+        //leftriser.setPower(0.0);
+        //rightriser.setPower(0.0);
+        DuckMech.setPower(0.0);
+        testPIDmotor.setPower(0.0);
+
 
 
         // Set all motors to run without encoders.
@@ -122,10 +141,12 @@ public class TechiesHardware
         leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //leftriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //rightriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+      //  testPIDmotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        testPIDmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
 
         // Define and initialize ALL installed servos.

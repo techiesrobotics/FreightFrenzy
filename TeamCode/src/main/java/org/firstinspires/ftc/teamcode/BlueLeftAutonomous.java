@@ -94,6 +94,8 @@ public class BlueLeftAutonomous extends LinearOpMode {
         telemetry.addData("Zone Level", targetZone);
 
         Drive_forward(targetZone);
+        //TODO KL:  deliver the score element
+        //TODO KL: park
         shutDownCamera();
 
 

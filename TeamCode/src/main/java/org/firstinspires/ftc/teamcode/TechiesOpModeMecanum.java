@@ -110,6 +110,7 @@ public class TechiesOpModeMecanum extends LinearOpMode {
             //telemetry.addData("Bucket", " (%.2f),",bucket_position);
 
             telemetry.update();
+
             if (gamepad1.right_bumper == true ) {
                 robot.intake.setPower(-1);
             }
@@ -124,8 +125,8 @@ public class TechiesOpModeMecanum extends LinearOpMode {
             }
 
             if (gamepad1.dpad_up == true ) {
-                robot.leftriser.setPower(-1);
-                robot.rightriser.setPower(-1);
+                robot.leftriser.setPower(.5);
+                robot.rightriser.setPower(.5);
 
             }
             else {
@@ -134,8 +135,8 @@ public class TechiesOpModeMecanum extends LinearOpMode {
 
             }
             if (gamepad1.dpad_down == true ) {
-                robot.leftriser.setPower(-1);
-                robot.rightriser.setPower(-1);
+                robot.leftriser.setPower(-.5);
+                robot.rightriser.setPower(-.5);
 
             }
             else {
@@ -143,6 +144,8 @@ public class TechiesOpModeMecanum extends LinearOpMode {
                 robot.rightriser.setPower(0);
 
             }
+
+
             if (gamepad1.a == true) {
                 robot.leftBucket.setPosition(.3);
                 robot.rightBucket.setPosition(.3);
@@ -152,6 +155,18 @@ public class TechiesOpModeMecanum extends LinearOpMode {
                 robot.rightBucket.setDirection(Servo.Direction.REVERSE);
                 robot.leftBucket.setPosition(0);
                 robot.rightBucket.setPosition(0);
+            }
+            if (gamepad1.x == true ) {
+                robot.DuckMech.setPower(.5);
+            }
+            else {
+                robot.DuckMech.setPower(0);
+            }
+            if (gamepad1.dpad_left == true ) {
+                robot.DuckMech.setPower(-.5);
+            }
+            else {
+                robot.DuckMech.setPower(0);
             }
 
         }
