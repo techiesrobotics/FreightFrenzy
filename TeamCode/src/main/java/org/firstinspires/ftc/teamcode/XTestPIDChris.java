@@ -11,24 +11,24 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @TeleOp(name="ChrisPIDPositionTest",group="Linear Opmode Test")
-public class ChrisPIDTest extends LinearOpMode {
+public class XTestPIDChris extends LinearOpMode {
     DcMotorEx motor;
     DcMotorEx motor2;
-
 
     double currentVelocity;
     double maxVelocity = 0.0;
     double currentPos;
-    double maxPos = 0.0;
+    //double maxPos = 0.0;
     double repetitions = 0;
-    double integral = 0.0;
-    ElapsedTime PIDtimer=  new ElapsedTime();
-    PIDCoefficients testPIDCofficients = new PIDCoefficients(1.2,0.220,0);
+    //double integral = 0.0;
+    //ElapsedTime PIDtimer=  new ElapsedTime();
+    //PIDCoefficients testPIDCofficients = new PIDCoefficients(1.2,0.220,0);
 
     @Override
     public void runOpMode() throws InterruptedException {
         motor = hardwareMap.get(DcMotorEx.class, "PID");
         motor2 = hardwareMap.get(DcMotorEx.class, "PID2");
+
         setUpMotor(motor);
         motor.setDirection(DcMotorEx.Direction.FORWARD);
         setUpMotor(motor2);
@@ -50,31 +50,26 @@ public class ChrisPIDTest extends LinearOpMode {
 
     private void setUpMotor(DcMotorEx aMotor) {
 
-
         aMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         aMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
         aMotor.setVelocityPIDFCoefficients(1.20,.220, 0,10.996); //Change these
-      //   motor2.setVelocityPIDFCoefficients(1.20,.220, 0,10.996); //Change these
-
         aMotor.setPositionPIDFCoefficients(5.0);
-
         aMotor.setTargetPositionTolerance(50); //Maybe change this
 
-        aMotor.setTargetPosition(4000);
-        aMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
     }
 
 
     private void moveTestMotorDiscord() {
         // if(gamepad1.) motor.setTargetPosition(0); // Change these
-        motor2.setTargetPosition(-4000);
-        motor.setTargetPosition(4000);
+        motor2.setTargetPosition(-550);
+        motor.setTargetPosition(550);
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         if(motor.isBusy() && repetitions < 800) {
-            motor.setPower(0.5);
-            motor2.setPower(0.5);
+            motor.setPower(0.6);
+            motor2.setPower(0.6);
 
         }
         else{

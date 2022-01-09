@@ -59,15 +59,13 @@ public class TechiesHardware
     public DcMotor  leftDrive   = null;
     public DcMotor  rightDrive  = null;
     public DcMotor  leftBack    = null;
-    public DcMotor  rightBack    = null;
-    public DcMotor  intake    = null;
-    public DcMotor  leftriser    = null;
-    public DcMotor  rightriser    = null;
-    public Servo    leftBucket    = null;
-    public Servo    rightBucket   = null;
-    public CRServo   DuckMech  = null;
-    //public DcMotorEx testPIDmotor    = null;
-    public DcMotor testPIDmotor    = null;
+    public DcMotor  rightBack   = null;
+    public DcMotor  intake      = null;
+    public DcMotorEx leftriser  = null;
+    public DcMotorEx rightriser = null;
+    public Servo    leftBucket  = null;
+    public Servo    rightBucket = null;
+    public CRServo   DuckMech   = null;
 
 
 
@@ -91,37 +89,20 @@ public class TechiesHardware
         leftBack  = hwMap.get(DcMotor.class, "backleft");
         //rightBack    = hwMap.get(DcMotor.class, "backright");
         //intake    = hwMap.get(DcMotor.class, "intake");
-        //leftriser    = hwMap.get(DcMotor.class, "leftriser");
-        //rightriser    = hwMap.get(DcMotor.class, "rightriser");
-       // testPIDmotor    = hwMap.get(DcMotorEx.class, "PID");
-
-
-
-        testPIDmotor    = hwMap.get(DcMotor.class, "PID");
-
-
-
+        leftriser    = hwMap.get(DcMotorEx.class, "leftriser");
+        rightriser    = hwMap.get(DcMotorEx.class, "rightriser");
         leftBucket    = hwMap.get(Servo.class, "leftBucket");
         rightBucket   = hwMap.get(Servo.class, "rightBucket");
         DuckMech   = hwMap.get(CRServo.class, "DuckMech");
-
-
 
         leftDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         rightDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         leftBack.setDirection(DcMotor.Direction.REVERSE);
         //rightBack.setDirection(DcMotor.Direction.FORWARD);
         //intake.setDirection(DcMotor.Direction.FORWARD);
-        //leftriser.setDirection(DcMotor.Direction.FORWARD);
-        //rightriser.setDirection(DcMotor.Direction.REVERSE);
-        testPIDmotor.setDirection(DcMotor.Direction.FORWARD);
-
 
         leftBucket.setPosition(0);
         rightBucket.setPosition(0);
-
-
-
 
         // Set all motors to zero power
         leftDrive.setPower(0.0);
@@ -129,11 +110,7 @@ public class TechiesHardware
         leftBack.setPower(0.0);
         //rightBack.setPower(0.0);
         //intake.setPower(0.0);
-        //leftriser.setPower(0.0);
-        //rightriser.setPower(0.0);
         DuckMech.setPower(0.0);
-        testPIDmotor.setPower(0.0);
-
 
 
         // Set all motors to run without encoders.
@@ -143,17 +120,19 @@ public class TechiesHardware
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //leftriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //rightriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-      //  testPIDmotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        testPIDmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        setUpMotor(leftriser);
+        setUpMotor(rightriser);
 
 
-        // Define and initialize ALL installed servos.
-        /*leftClaw  = hwMap.get(Servo.class, "left_hand");
-        rightClaw = hwMap.get(Servo.class, "right_hand");
-        leftClaw.setPosition(MID_SERVO);
-        rightClaw.setPosition(MID_SERVO);*/
+    }
+    private void setUpMotor(DcMotorEx aMotor) {
+
+        aMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        aMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        aMotor.setVelocityPIDFCoefficients(1.20,.220, 0,10.996); //Change these
+        aMotor.setPositionPIDFCoefficients(5.0);
+        aMotor.setTargetPositionTolerance(50); //Maybe change this
+        aMotor.setDirection(DcMotorEx.Direction.FORWARD);
     }
  }
 

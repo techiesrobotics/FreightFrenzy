@@ -31,6 +31,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -56,6 +58,11 @@ public class TechiesOpModeMecanum extends LinearOpMode {
     // Declare OpMode members.
     TechiesHardware robot   = new TechiesHardware();
     private ElapsedTime runtime = new ElapsedTime();
+    double currentVelocity;
+    double maxVelocity = 0.0;
+    double currentPos;
+    double repetitions = 0;
+
 
     @Override
     public void runOpMode() {
@@ -75,8 +82,6 @@ public class TechiesOpModeMecanum extends LinearOpMode {
             double rightPower;
             double backleftPower;
             double backrightPower;
-
-            //double bucket_position= 0;
 
             // Choose to drive using either Tank Mode, or POV Mode
             // Comment out the method that's not used.  The default below is POV.
@@ -107,7 +112,6 @@ public class TechiesOpModeMecanum extends LinearOpMode {
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-            //telemetry.addData("Bucket", " (%.2f),",bucket_position);
 
             telemetry.update();
 
@@ -124,45 +128,39 @@ public class TechiesOpModeMecanum extends LinearOpMode {
                 robot.intake.setPower(0);
             }
 
-            if (gamepad1.dpad_up == true ) {
-                robot.leftriser.setPower(.5);
-                robot.rightriser.setPower(.5);
-
+            if (gamepad1.a) {
+                SlideMovementPID(200);
             }
-            else {
-                robot.leftriser.setPower(0);
-                robot.rightriser.setPower(0);
 
+            if (gamepad1.b) {
+                SlideMovementPID(350);
             }
-            if (gamepad1.dpad_down == true ) {
-                robot.leftriser.setPower(-.5);
-                robot.rightriser.setPower(-.5);
+            if (gamepad1.y) {
+                SlideMovementPID(500);
+            }
+            if (gamepad1.x) {
+                robot.rightriser.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+                robot.leftriser.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
-            }
-            else {
-                robot.leftriser.setPower(0);
-                robot.rightriser.setPower(0);
 
             }
 
 
-            if (gamepad1.a == true) {
+            if (gamepad1.dpad_up) {
                 robot.leftBucket.setPosition(.3);
                 robot.rightBucket.setPosition(.3);
             }
-            else if (gamepad1.b == true) {
-                robot.leftBucket.setDirection(Servo.Direction.REVERSE);
-                robot.rightBucket.setDirection(Servo.Direction.REVERSE);
+            else if (gamepad1.dpad_down) {
                 robot.leftBucket.setPosition(0);
                 robot.rightBucket.setPosition(0);
             }
-            if (gamepad1.x == true ) {
+            if (gamepad1.dpad_right) {
                 robot.DuckMech.setPower(.5);
             }
             else {
                 robot.DuckMech.setPower(0);
             }
-            if (gamepad1.dpad_left == true ) {
+            if (gamepad1.dpad_left) {
                 robot.DuckMech.setPower(-.5);
             }
             else {
@@ -170,5 +168,35 @@ public class TechiesOpModeMecanum extends LinearOpMode {
             }
 
         }
+    }
+
+    private void SlideMovementPID (int targetPosition) {
+        robot.rightriser.setTargetPosition(targetPosition);
+        robot.leftriser.setTargetPosition(-targetPosition);
+        robot.rightriser.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.leftriser.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        if(robot.rightriser.isBusy() && repetitions < 800) {
+            robot.rightriser.setPower(0.6);
+            robot.leftriser.setPower(0.6);
+
+        }
+        else{
+            robot.rightriser.setPower(0);
+            robot.leftriser.setPower(0);
+            repetitions = 0;
+        }
+        currentVelocity = robot.rightriser.getVelocity();
+        currentPos = robot.leftriser.getCurrentPosition();
+        if (currentVelocity > maxVelocity)
+            maxVelocity = currentVelocity;
+
+        telemetry.addData("current velocity", currentVelocity);
+        telemetry.addData("current position", currentPos);
+        telemetry.addData("position delta", currentPos- robot.rightriser.getTargetPosition());
+        telemetry.addData("power", robot.rightriser.getPower());
+        telemetry.addData("repetitions", repetitions);
+        telemetry.update();
+        repetitions++;
     }
 }
