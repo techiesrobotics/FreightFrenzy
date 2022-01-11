@@ -44,13 +44,13 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import java.util.List;
 
 
-@Autonomous(name="Blue Right", group="Pushbot")
+//@Autonomous(name="Auto Mode", group="Pushbot")
 //@Disabled
-public class BlueRightAutonomous extends LinearOpMode {
+public abstract class AutoParent extends LinearOpMode {
 
     /* Declare OpMode members. */
     TechiesHardware robot = new TechiesHardware();
-    private ElapsedTime runtime = new ElapsedTime();
+    ElapsedTime runtime = new ElapsedTime();
 
     static final double COUNTS_PER_MOTOR_REV = 1440;    // eg: TETRIX Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
@@ -65,13 +65,13 @@ public class BlueRightAutonomous extends LinearOpMode {
     public static final int LEVEL_ZONE_3 = 3;
     public static final int LEVEL_ZONE_DEFAULT = LEVEL_ZONE_1;
 
-    private static final String VUFORIA_KEY =
+    static final String VUFORIA_KEY =
             " AbfemMf/////AAABmVQ5LwVH3Umfv+Oiv7oNSvcdOBa+ogwEc69mgH/qFNgbn1NXBJsX4J5R6N4SYojjxFB6eHjdTHaT3i9ZymELzgaFrPziL5B/TX2/dkxnIK5dcOjLHOZu2K3jVPYciJnwj20ZmRXSN46Y4uMdzWSJ3X1wgKovNQzZvx+7dljIonRJfLjSF5aSuoTDqEkdcsGTJ92J7jgc5jN53Vml3rAI+qPUTT8qpI8T1enV6NYublcUMpofpovmHsH9kvI+U1h9Rc8cXwbGPlr3PVoKQOwuZA0Y98Jywey6URYTswzpbMw8cWu4PMisB2ujpf0VEjiV6jjofr3OVRj6r5lEJZsnElY2mOhXdgVqJndvXYvCSpyI";
-    private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
-    private static final String LABEL_FIRST_ELEMENT = "Duck";
-    private VuforiaLocalizer vuforia;
-    private TFObjectDetector tfod;
-    private String Level;
+    static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
+    static final String LABEL_FIRST_ELEMENT = "Duck";
+    VuforiaLocalizer vuforia;
+    TFObjectDetector tfod;
+    String Level;
 
 
 
@@ -83,25 +83,46 @@ public class BlueRightAutonomous extends LinearOpMode {
          * The init() method of the hardware class does all the work here
          */
         robot.init(hardwareMap);
-        initiateRobot();
+        initiateRobot(); // TODO: should this be done in the TechiesHardware class?
         initVuforia();
         initTfod();
         activateCamera();
+        int targetZone = determineZoneLevel(); //TODO
+        telemetry.addData("Zone Level", targetZone);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        int targetZone = determineZoneLevel();
-        telemetry.addData("Zone Level", targetZone);
 
-        Drive_forward(targetZone);
+        doMissions(targetZone);
         shutDownCamera();
-
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
 
-    private void Drive_forward(int targetZone) {
+    protected void doMissions(int targetZone) {
+
+        goToAllianceHubFromStart();
+        dropPreloadFrieght(targetZone);
+        doAdditionalMissions(targetZone);
+        park();
+
+
+    }
+
+    protected abstract void doAdditionalMissions(int targetZone) ;
+
+    protected abstract void park();
+    protected abstract void goToAllianceHubFromWarehouse();
+    protected abstract void pickUpFreight();
+    protected abstract void moveToWarehouse();
+    protected abstract void goToAllianceHubFromStart() ;
+    protected abstract void dropPreloadFrieght(int targetZone) ;
+    protected abstract void dropFrieght() ;
+
+
+
+    /*
         if (LEVEL_ZONE_1 == targetZone) {
             encoderDrive(DRIVE_SPEED, -10, -10, -10, -10, 5.0);
 
@@ -115,7 +136,7 @@ public class BlueRightAutonomous extends LinearOpMode {
 
         }
 
-    }
+    }*/
 
 
     public void encoderDrive(double speed,
@@ -181,7 +202,7 @@ public class BlueRightAutonomous extends LinearOpMode {
         }
     }
 
-    private void setEncoder(DcMotor.RunMode stopAndResetEncoder) {
+     void setEncoder(DcMotor.RunMode stopAndResetEncoder) {
         robot.leftDrive.setMode(stopAndResetEncoder);
         robot.rightDrive.setMode(stopAndResetEncoder);
         robot.leftBack.setMode(stopAndResetEncoder);

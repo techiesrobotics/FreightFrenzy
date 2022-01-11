@@ -63,8 +63,8 @@ public class TechiesHardware
     public DcMotor  intake      = null;
     public DcMotorEx leftriser  = null;
     public DcMotorEx rightriser = null;
-    public Servo    leftBucket  = null;
-    public Servo    rightBucket = null;
+    public CRServo    leftBucket  = null;
+    public CRServo    rightBucket = null;
     public CRServo   DuckMech   = null;
 
 
@@ -87,12 +87,12 @@ public class TechiesHardware
         leftDrive  = hwMap.get(DcMotor.class, "frontleft");
         rightDrive = hwMap.get(DcMotor.class, "frontright");
         leftBack  = hwMap.get(DcMotor.class, "backleft");
-        //rightBack    = hwMap.get(DcMotor.class, "backright");
-        //intake    = hwMap.get(DcMotor.class, "intake");
+        rightBack    = hwMap.get(DcMotor.class, "backright");
+        intake    = hwMap.get(DcMotor.class, "intake");
         leftriser    = hwMap.get(DcMotorEx.class, "leftriser");
         rightriser    = hwMap.get(DcMotorEx.class, "rightriser");
-        leftBucket    = hwMap.get(Servo.class, "leftBucket");
-        rightBucket   = hwMap.get(Servo.class, "rightBucket");
+        leftBucket    = hwMap.get(CRServo.class, "leftBucket");
+        rightBucket   = hwMap.get(CRServo.class, "rightBucket");
         DuckMech   = hwMap.get(CRServo.class, "DuckMech");
 
         leftDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
@@ -100,9 +100,12 @@ public class TechiesHardware
         leftBack.setDirection(DcMotor.Direction.REVERSE);
         //rightBack.setDirection(DcMotor.Direction.FORWARD);
         //intake.setDirection(DcMotor.Direction.FORWARD);
+        DuckMech.setDirection(CRServo.Direction.FORWARD);
+        leftBucket.setDirection(CRServo.Direction.FORWARD);
+        rightBucket.setDirection(CRServo.Direction.FORWARD);
 
-        leftBucket.setPosition(0);
-        rightBucket.setPosition(0);
+
+
 
         // Set all motors to zero power
         leftDrive.setPower(0.0);
@@ -111,6 +114,8 @@ public class TechiesHardware
         //rightBack.setPower(0.0);
         //intake.setPower(0.0);
         DuckMech.setPower(0.0);
+        leftBucket.setPower(0.0);
+        rightBucket.setPower(0.0);
 
 
         // Set all motors to run without encoders.
