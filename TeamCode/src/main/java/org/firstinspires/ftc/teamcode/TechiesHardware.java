@@ -63,9 +63,10 @@ public class TechiesHardware
     public DcMotor  intake      = null;
     public DcMotorEx leftriser  = null;
     public DcMotorEx rightriser = null;
-    public CRServo    leftBucket  = null;
-    public CRServo    rightBucket = null;
+    public CRServo  leftBucket  = null;
+    public CRServo  rightBucket = null;
     public CRServo   DuckMech   = null;
+    public Servo   horizontalSlide   = null;
 
 
 
@@ -94,12 +95,13 @@ public class TechiesHardware
         leftBucket    = hwMap.get(CRServo.class, "leftBucket");
         rightBucket   = hwMap.get(CRServo.class, "rightBucket");
         DuckMech   = hwMap.get(CRServo.class, "DuckMech");
+        horizontalSlide = hwMap.get(Servo.class, "horizontalSlide");
 
         leftDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         rightDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         leftBack.setDirection(DcMotor.Direction.REVERSE);
-        //rightBack.setDirection(DcMotor.Direction.FORWARD);
-        //intake.setDirection(DcMotor.Direction.FORWARD);
+        rightBack.setDirection(DcMotor.Direction.FORWARD);
+        intake.setDirection(DcMotor.Direction.FORWARD);
         DuckMech.setDirection(CRServo.Direction.FORWARD);
         leftBucket.setDirection(CRServo.Direction.FORWARD);
         rightBucket.setDirection(CRServo.Direction.FORWARD);
@@ -111,11 +113,12 @@ public class TechiesHardware
         leftDrive.setPower(0.0);
         rightDrive.setPower(0.0);
         leftBack.setPower(0.0);
-        //rightBack.setPower(0.0);
-        //intake.setPower(0.0);
+        rightBack.setPower(0.0);
+        intake.setPower(0.0);
         DuckMech.setPower(0.0);
         leftBucket.setPower(0.0);
         rightBucket.setPower(0.0);
+        horizontalSlide.setPosition(0);
 
 
         // Set all motors to run without encoders.
@@ -123,8 +126,8 @@ public class TechiesHardware
         leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         setUpMotor(leftriser);
         setUpMotor(rightriser);
 

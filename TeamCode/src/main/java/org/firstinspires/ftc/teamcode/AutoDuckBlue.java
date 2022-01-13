@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-
+/*
 @Autonomous(name="AutoDuckBlue", group="Pushbot")
 //@Disabled
 public class AutoDuckBlue extends AutoDuck {
@@ -32,3 +32,5 @@ public class AutoDuckBlue extends AutoDuck {
     }
 
 }
+
+ */
