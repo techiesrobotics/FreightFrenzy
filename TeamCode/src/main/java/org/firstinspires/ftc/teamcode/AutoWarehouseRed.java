@@ -59,9 +59,4 @@ public class AutoWarehouseRed extends AutoWarehouse {
     }
 
 
-    @Override
-    protected void dropPreloadFrieght(int targetZone) {
-
-    }
-
 }

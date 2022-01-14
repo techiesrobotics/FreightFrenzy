@@ -103,7 +103,7 @@ public abstract class AutoParent extends LinearOpMode {
     protected void doMissions(int targetZone) {
 
         goToAllianceHubFromStart();
-        dropPreloadFrieght(targetZone);
+        dropPreloadFreight(targetZone);
         doAdditionalMissions(targetZone);
         park();
 
@@ -111,14 +111,11 @@ public abstract class AutoParent extends LinearOpMode {
     }
 
     protected abstract void doAdditionalMissions(int targetZone) ;
-
     protected abstract void park();
-    protected abstract void goToAllianceHubFromWarehouse();
-    protected abstract void pickUpFreight();
-    protected abstract void moveToWarehouse();
     protected abstract void goToAllianceHubFromStart() ;
-    protected abstract void dropPreloadFrieght(int targetZone) ;
-    protected abstract void dropFrieght() ;
+    protected void dropPreloadFreight(int targetZone) {
+        //TOOO
+    }
 
 
 

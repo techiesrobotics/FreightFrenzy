@@ -18,11 +18,7 @@ public class XTestPIDChris extends LinearOpMode {
     double currentVelocity;
     double maxVelocity = 0.0;
     double currentPos;
-    //double maxPos = 0.0;
     double repetitions = 0;
-    //double integral = 0.0;
-    //ElapsedTime PIDtimer=  new ElapsedTime();
-    //PIDCoefficients testPIDCofficients = new PIDCoefficients(1.2,0.220,0);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -36,14 +32,8 @@ public class XTestPIDChris extends LinearOpMode {
         waitForStart();
         // Pre-run
         while (opModeIsActive()) {
-
-           // if (gamepad1.right_bumper){
-                moveTestMotorDiscord();
-            //}
-
-         //   if(gamepad1.left_bumper) {
-           //    moveTestMotorYouTubeTutorial(1300);
-            //}
+            moveTestMotor();
+            
 
         }
     }
@@ -60,7 +50,7 @@ public class XTestPIDChris extends LinearOpMode {
     }
 
 
-    private void moveTestMotorDiscord() {
+    private void moveTestMotor() {
         // if(gamepad1.) motor.setTargetPosition(0); // Change these
         motor2.setTargetPosition(-550);
         motor.setTargetPosition(550);
@@ -90,35 +80,5 @@ public class XTestPIDChris extends LinearOpMode {
         telemetry.update();
         repetitions++;
     }
-/*
-    public void moveTestMotorYouTubeTutorial(double targetPosition)
-    {
-        double error = motor.getCurrentPosition();
-        double lastError = 0;
 
-        while (Math.abs(error) <= 9){
-            telemetry.addData("error", error);
-            telemetry.addData("Current Position", motor.getCurrentPosition());
-            telemetry.update();
-
-            error = motor.getCurrentPosition() - targetPosition;
-            double changeInError = lastError - error;
-             integral += changeInError * PIDtimer.time();
-             double derivative = changeInError / PIDtimer.time();;
-             double P = testPIDCofficients.p * error;
-             double I = testPIDCofficients.i * integral;
-             double D = testPIDCofficients.d * derivative;
-             motor.setPower(0.5 + P + I + D);
-            telemetry.addData("P", P);
-            telemetry.addData("I", I);
-            telemetry.addData("D", D);
-            telemetry.addData("Derivative", derivative);
-            telemetry.update();
-            error = lastError;
-
-            PIDtimer.reset();
-
-
-        }
-    }*/
 }

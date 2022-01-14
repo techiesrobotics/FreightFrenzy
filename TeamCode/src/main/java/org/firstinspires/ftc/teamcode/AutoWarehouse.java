@@ -34,29 +34,24 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 //@Disabled
 public abstract class AutoWarehouse extends AutoParent {
-
+    protected abstract void goToAllianceHubFromWarehouse();
+    protected abstract void moveToWarehouse();
     protected void doAdditionalMissions(int targetZone) {
         for (int i = 0; i < 5; i++) {
             moveToWarehouse();
             pickUpFreight();
             goToAllianceHubFromWarehouse();
-            dropFrieght();
+            dropFreight();
         }
     }
 
-    @Override
+
     protected void pickUpFreight() {
-
+        // TODO
     }
 
 
-    @Override
-    protected void dropPreloadFrieght(int targetZone) {
-
-    }
-
-    @Override
-    protected void dropFrieght() {
-
+    protected void dropFreight() {
+        // TODO
     }
 }

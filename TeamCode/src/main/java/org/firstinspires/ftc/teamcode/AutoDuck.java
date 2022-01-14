@@ -33,20 +33,17 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 
 //@Disabled
-/*public abstract class AutoDuck extends AutoParent {
-    protected abstract void spinCarousel();
+public abstract class AutoDuck extends AutoParent {
     protected abstract void goToCarousel();
+    protected abstract void spinCarousel();
     protected void doAdditionalMissions(int targetZone) {
         goToCarousel();
         spinCarousel();
         }
 
 
-    protected void spinCarousel() {
 
-    }
 
 
 }
 
- */
