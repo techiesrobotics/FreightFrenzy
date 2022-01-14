@@ -65,7 +65,7 @@ public class TechiesHardware
     public DcMotorEx rightriser = null;
     public CRServo  leftBucket  = null;
     public CRServo  rightBucket = null;
-    public CRServo   DuckMech   = null;
+    public Servo   DuckMech   = null;
     public Servo   horizontalSlide   = null;
 
 
@@ -94,7 +94,7 @@ public class TechiesHardware
         rightriser    = hwMap.get(DcMotorEx.class, "rightriser");
         leftBucket    = hwMap.get(CRServo.class, "leftBucket");
         rightBucket   = hwMap.get(CRServo.class, "rightBucket");
-        DuckMech   = hwMap.get(CRServo.class, "DuckMech");
+        DuckMech   = hwMap.get(Servo.class, "DuckMech");
         horizontalSlide = hwMap.get(Servo.class, "horizontalSlide");
 
         leftDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
@@ -102,7 +102,7 @@ public class TechiesHardware
         leftBack.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(DcMotor.Direction.FORWARD);
-        DuckMech.setDirection(CRServo.Direction.FORWARD);
+        //DuckMech.setDirection(CRServo.Direction.FORWARD);
         leftBucket.setDirection(CRServo.Direction.FORWARD);
         rightBucket.setDirection(CRServo.Direction.FORWARD);
 
@@ -115,7 +115,7 @@ public class TechiesHardware
         leftBack.setPower(0.0);
         rightBack.setPower(0.0);
         intake.setPower(0.0);
-        DuckMech.setPower(0.0);
+       // DuckMech.setPower(0.0);
         leftBucket.setPower(0.0);
         rightBucket.setPower(0.0);
         horizontalSlide.setPosition(0);
