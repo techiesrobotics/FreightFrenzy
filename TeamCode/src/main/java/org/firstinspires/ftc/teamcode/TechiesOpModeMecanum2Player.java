@@ -33,8 +33,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -52,9 +50,9 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Techies OpMode Mecanum", group="Linear Opmode")
+@TeleOp(name="Techies OpMode 2 player", group="Linear Opmode")
 //@Disabled
-public class TechiesOpModeMecanum extends LinearOpMode {
+public class TechiesOpModeMecanum2Player extends LinearOpMode {
 
     // Declare OpMode members.
     TechiesHardware robot   = new TechiesHardware();
@@ -89,9 +87,9 @@ public class TechiesOpModeMecanum extends LinearOpMode {
 
             // POV Mode uses left stick to go forward, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.
-            double turn = gamepad1.right_stick_x;
-            double drivefb  = -gamepad1.left_stick_y;
-            double drivelr = gamepad1.left_stick_x;
+            double turn = gamepad2.right_stick_x;
+            double drivefb  = -gamepad2.left_stick_y;
+            double drivelr = gamepad2.left_stick_x;
 
             leftPower    = Range.clip(drivefb + turn + drivelr, -1.0, 1.0) ;
             rightPower   = Range.clip(drivefb - turn - drivelr, -1.0, 1.0) ;
@@ -179,11 +177,11 @@ public class TechiesOpModeMecanum extends LinearOpMode {
             else {
                 robot.DuckMech.setPosition(.5);
             }
-            if (gamepad2.dpad_left) {
-                robot.horizontalSlide.setPosition(1);
+            if (gamepad2.dpad_up) {
+                robot.horizontalSlide.setPosition(.8);
             }
 
-            if (gamepad2.dpad_right) {
+            if (gamepad2.dpad_down) {
                 robot.horizontalSlide.setPosition(.3);
             }
 

@@ -118,7 +118,7 @@ public class TechiesHardware
        // DuckMech.setPower(0.0);
         leftBucket.setPower(0.0);
         rightBucket.setPower(0.0);
-        horizontalSlide.setPosition(0);
+        horizontalSlide.setPosition(0.25);
 
 
         // Set all motors to run without encoders.

@@ -289,7 +289,7 @@ class  FFPipeline extends OpenCvPipeline {
          */
         if (max == avg1) // Was it from region 1?
         {
-            position = FreightLocation.THREE; // Record our analysis
+            position = FreightLocation.ONE; // Record our analysis
 
             /*
              * Draw a solid rectangle on top of the chosen region.
@@ -317,7 +317,7 @@ class  FFPipeline extends OpenCvPipeline {
                     -1); // Negative thickness means solid fill
         } else if (max == avg3) // Was it from region 3?
         {
-            position = FreightLocation.ONE; // Record our analysis
+            position = FreightLocation.THREE;// Record our analysis
 
             /*
              * Draw a solid rectangle on top of the chosen region.

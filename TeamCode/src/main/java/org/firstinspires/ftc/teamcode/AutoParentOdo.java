@@ -29,9 +29,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -47,13 +44,11 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import java.util.List;
 
 
-//@Autonomous(name="Auto Mode", group="Pushbot")
 //@Disabled
-public abstract class AutoParent extends LinearOpMode {
+public abstract class AutoParentOdo extends LinearOpMode {
 
     /* Declare OpMode members. */
-    SampleMecanumDrive drive; // = new SampleMecanumDrive(hardwareMap);
-
+    SampleMecanumDrive odoDriveTrain;
     TechiesHardware robot = new TechiesHardware();
     ElapsedTime runtime = new ElapsedTime();
 
@@ -88,21 +83,22 @@ public abstract class AutoParent extends LinearOpMode {
          * The init() method of the hardware class does all the work here
          */
 
-        robot.init(hardwareMap);
+       // robot.init(hardwareMap);
         // test
-        drive = new SampleMecanumDrive(hardwareMap);
-        initiateRobot(); // TODO: should this be done in the TechiesHardware class?
+        odoDriveTrain = new SampleMecanumDrive(hardwareMap);
+        //initiateRobot(); // TODO: this may not needed TODO: should this be done in the TechiesHardware class?
+        /* TODO KL:  temperately comment out, to test odo, uncomment later
         initVuforia();
         initTfod();
         activateCamera();
-        int targetZone = determineZoneLevel(); //TODO
+        int targetZone = determineZoneLevel();
         telemetry.addData("Zone Level", targetZone);
-
+*/
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
+int targetZone = 1; // TODO KL Remove this later
         doMissions(targetZone);
-        shutDownCamera();
+     //TODO uncomment later   shutDownCamera();
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -143,7 +139,7 @@ public abstract class AutoParent extends LinearOpMode {
 
     }*/
 
-
+/* KL This may not needed
     public void encoderDrive(double speed,
                              double leftInches, double rightInches, double leftBackInches, double rightBackInches,
                              double timeoutS) {
@@ -213,7 +209,7 @@ public abstract class AutoParent extends LinearOpMode {
         robot.leftBack.setMode(stopAndResetEncoder);
         robot.rightBack.setMode(stopAndResetEncoder);
     }
-
+*/
     private void initVuforia() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
@@ -257,6 +253,7 @@ public abstract class AutoParent extends LinearOpMode {
             tfod.setZoom(1.1, 16.0 / 5.0);
         }
     }
+/*
     protected void initiateRobot() {
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
@@ -273,6 +270,8 @@ public abstract class AutoParent extends LinearOpMode {
                 robot.rightDrive.getCurrentPosition());
         telemetry.update();
     }
+
+ */
     protected int determineZoneLevel() {
         int targetZone = LEVEL_ZONE_DEFAULT;
         if (opModeIsActive()) {
