@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -49,9 +50,13 @@ public abstract class AutoParentOdo extends LinearOpMode {
 
     /* Declare OpMode members. */
     SampleMecanumDrive odoDriveTrain;
-    TechiesHardware robot = new TechiesHardware();
+    TechiesHardwareWithoutDriveTrain robot;
     ElapsedTime runtime = new ElapsedTime();
-
+    double currentVelocity;
+    double maxVelocity = 0.0;
+    double currentPos;
+    double repetitions = 0;
+    SlideMovementPIDController pidController;
     static final double COUNTS_PER_MOTOR_REV = 1440;    // eg: TETRIX Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
@@ -83,22 +88,23 @@ public abstract class AutoParentOdo extends LinearOpMode {
          * The init() method of the hardware class does all the work here
          */
 
-       // robot.init(hardwareMap);
-        // test
+        robot = new TechiesHardwareWithoutDriveTrain(hardwareMap);
         odoDriveTrain = new SampleMecanumDrive(hardwareMap);
-        //initiateRobot(); // TODO: this may not needed TODO: should this be done in the TechiesHardware class?
-        /* TODO KL:  temperately comment out, to test odo, uncomment later
+        pidController = new SlideMovementPIDController(telemetry);
         initVuforia();
         initTfod();
         activateCamera();
         int targetZone = determineZoneLevel();
         telemetry.addData("Zone Level", targetZone);
-*/
+
+
         // Wait for the game to start (driver presses PLAY)
+        telemetry.addData("before wait for start", "before");
         waitForStart();
-int targetZone = 1; // TODO KL Remove this later
+
         doMissions(targetZone);
-     //TODO uncomment later   shutDownCamera();
+
+        shutDownCamera();
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -118,98 +124,124 @@ int targetZone = 1; // TODO KL Remove this later
     protected abstract void park();
     protected abstract void goToAllianceHubFromStart() ;
     protected void dropPreloadFreight(int targetZone) {
-        //TOOO
-    }
+        telemetry.addData("dropPreloadFreight", "dropPreloadFreight");
 
-
-
-    /*
         if (LEVEL_ZONE_1 == targetZone) {
-            encoderDrive(DRIVE_SPEED, -10, -10, -10, -10, 5.0);
+            robot.leftBucket.setPower(-.2);
+            robot.rightBucket.setPower(-.2);
+            sleep(350);
+            robot.leftBucket.setPower(0);
+            robot.rightBucket.setPower(0);
+            SlideMovementPID(100);
+            robot.horizontalSlide.setPosition(.8);
+            sleep(1000);
+            robot.leftBucket.setPower(-.2);
+            robot.rightBucket.setPower(-.2);
+            sleep(800);
+            robot.leftBucket.setPower(.2);
+            robot.rightBucket.setPower(.2);
+            sleep(600);
+            robot.horizontalSlide.setPosition(.3);
+            robot.slides.rightriser.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+            robot.slides.leftriser.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+            robot.slides.rightriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.slides.leftriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.slides.leftriser.setPower(0);
+            robot.slides.rightriser.setPower(0);
 
         } else if (LEVEL_ZONE_2 == targetZone) {
-            encoderDrive(DRIVE_SPEED, -51, -51, -51, -51, 5.0);
+            robot.leftBucket.setPower(-.2);
+            robot.rightBucket.setPower(-.2);
+            sleep(350);
+            robot.leftBucket.setPower(0);
+            robot.rightBucket.setPower(0);
+            SlideMovementPID(300);
+            robot.horizontalSlide.setPosition(.8);
+            sleep(1000);
+            robot.leftBucket.setPower(-.2);
+            robot.rightBucket.setPower(-.2);
+            sleep(1000);
+            robot.leftBucket.setPower(.2);
+            robot.rightBucket.setPower(.2);
+            sleep(150);
+            robot.horizontalSlide.setPosition(.3);
+            sleep(100);
+            robot.slides.rightriser.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+            robot.slides.leftriser.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+            robot.slides.rightriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.slides.leftriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.slides.leftriser.setPower(0);
+            robot.slides.rightriser.setPower(0);
 
 
         } else if (LEVEL_ZONE_3 == targetZone) {
-            encoderDrive(DRIVE_SPEED, 10, 10, 10, 10, 5.0);
+            robot.leftBucket.setPower(-.2);
+            robot.rightBucket.setPower(-.2);
+            sleep(350);
+            robot.leftBucket.setPower(0);
+            robot.rightBucket.setPower(0);
+            SlideMovementPID(470);
+            robot.horizontalSlide.setPosition(.8);
+            sleep(1000);
+            robot.leftBucket.setPower(-.2);
+            robot.rightBucket.setPower(-.2);
+            sleep(700);
+            robot.leftBucket.setPower(.1);
+            robot.rightBucket.setPower(.1);
+            sleep(175);
+            robot.horizontalSlide.setPosition(.3);
+            sleep(100);
+            robot.slides.rightriser.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+            robot.slides.leftriser.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+            robot.slides.rightriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.slides.leftriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.slides.leftriser.setPower(0);
+            robot.slides.rightriser.setPower(0);
 
 
         }
 
-    }*/
 
-/* KL This may not needed
-    public void encoderDrive(double speed,
-                             double leftInches, double rightInches, double leftBackInches, double rightBackInches,
-                             double timeoutS) {
-        int newLeftTarget;
-        int newRightTarget;
-        int newLeftBackTarget;
-        int newRightBackTarget;
+        /*
+        robot.setBucketPower(-.2);
+        sleep(350);
+        robot.setBucketPower(0);
 
-        // Ensure that the opmode is still active
-        if (opModeIsActive()) {
-            // Determine new target position, and pass to motor controller
-            newLeftTarget = robot.leftDrive.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
-            newRightTarget = robot.rightDrive.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
-            newLeftBackTarget = robot.leftBack.getCurrentPosition() + (int) (leftBackInches * COUNTS_PER_INCH);
-            newRightBackTarget = robot.rightBack.getCurrentPosition() + (int) (rightBackInches * COUNTS_PER_INCH);
 
-            robot.leftDrive.setTargetPosition(newLeftTarget);
-            robot.rightDrive.setTargetPosition(newRightTarget);
-            robot.leftBack.setTargetPosition(newLeftBackTarget);
-            robot.rightBack.setTargetPosition(newRightBackTarget);
-            // Turn On RUN_TO_POSITION
-            setEncoder(DcMotor.RunMode.RUN_TO_POSITION);
-            // reset the timeout time and start motion.
-            runtime.reset();
-            robot.leftDrive.setPower(Math.abs(speed));
-            robot.rightDrive.setPower(Math.abs(speed));
-            robot.leftBack.setPower(Math.abs(speed));
-            robot.rightBack.setPower(Math.abs(speed));
-
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-            // its target position, the motion will stop.  This is "safer" in the event that the robot will
-            // always end the motion as soon as possible.
-            // However, if you require that BOTH motors have finished their moves before the robot continues
-            // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS) &&
-                    (robot.leftDrive.isBusy() && robot.rightDrive.isBusy() &&
-                            robot.leftBack.isBusy() && robot.rightBack.isBusy())) {
-
-                // Display it for the driver.
-                telemetry.addData("Path1", "Running to %7d :%7d", newLeftTarget,
-                        newRightTarget, newLeftBackTarget, newRightBackTarget);
-                telemetry.addData("Path2", "Running at %7d :%7d",
-                        robot.leftDrive.getCurrentPosition(),
-                        robot.rightDrive.getCurrentPosition(),
-                        robot.leftBack.getCurrentPosition(),
-                        robot.rightBack.getCurrentPosition());
-                telemetry.update();
-            }
-
-            // Stop all motion;
-            robot.leftDrive.setPower(0);
-            robot.rightDrive.setPower(0);
-            robot.leftBack.setPower(0);
-            robot.rightBack.setPower(0);
-
-            // Turn off RUN_TO_POSITION
-            setEncoder(DcMotor.RunMode.RUN_USING_ENCODER);
-            //  sleep(250);   // optional pause after each move
+        if (LEVEL_ZONE_1 == targetZone) {
+          // TODO KL TEST
+              SlideMovementPID(200);  // different
+            //pidController.slideMovementPID(robot.slides, 200);
+        } else if (LEVEL_ZONE_2 == targetZone) {
+            SlideMovementPID(300);
+            // TODO KL TEST
+         //   pidController.slideMovementPID(robot.slides, 300);
+        } else if (LEVEL_ZONE_3 == targetZone) {
+             SlideMovementPID(450);
+            // TODO KL TEST
+            //pidController.slideMovementPID(robot.slides, 450);
         }
+        robot.horizontalSlide.setPosition(.8);
+        sleep(1000);
+        robot.setBucketPower(-.2); // TODO is this the same across 3? .2 or -.2?
+        sleep(1000);
+        robot.setBucketPower(.2);
+
+        if (LEVEL_ZONE_1 == targetZone) {
+            sleep(600);
+        } else if (LEVEL_ZONE_2 == targetZone) {
+            sleep(150);
+        } else if (LEVEL_ZONE_3 == targetZone) {
+            sleep(150);
+        }
+        robot.horizontalSlide.setPosition(.3);
+        sleep(100);
+        robot.slides.setRiserPower(0);
+
+         */
+
     }
 
-     void setEncoder(DcMotor.RunMode stopAndResetEncoder) {
-        robot.leftDrive.setMode(stopAndResetEncoder);
-        robot.rightDrive.setMode(stopAndResetEncoder);
-        robot.leftBack.setMode(stopAndResetEncoder);
-        robot.rightBack.setMode(stopAndResetEncoder);
-    }
-*/
     private void initVuforia() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
@@ -225,6 +257,7 @@ int targetZone = 1; // TODO KL Remove this later
 
         // Loading trackables is not necessary for the TensorFlow Object Detection engine.
     }
+
     private void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -253,25 +286,7 @@ int targetZone = 1; // TODO KL Remove this later
             tfod.setZoom(1.1, 16.0 / 5.0);
         }
     }
-/*
-    protected void initiateRobot() {
-        telemetry.addData("Status", "Resetting Encoders");    //
-        telemetry.update();
 
-        robot.leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0", "Starting at %7d :%7d",
-                robot.leftDrive.getCurrentPosition(),
-                robot.rightDrive.getCurrentPosition());
-        telemetry.update();
-    }
-
- */
     protected int determineZoneLevel() {
         int targetZone = LEVEL_ZONE_DEFAULT;
         if (opModeIsActive()) {
@@ -291,24 +306,22 @@ int targetZone = 1; // TODO KL Remove this later
                             Double angle = Double.valueOf( recognition.estimateAngleToObject(AngleUnit.DEGREES));
                             telemetry.addData(String.format("  Angle: "), angle);
 
+                            // TODO wrong logic here KL
                             if (angle.doubleValue() <= -7){
                                 Level = "One";
-                                telemetry.addData(String.format("  Level: "), Level);
                                 targetZone = LEVEL_ZONE_1;
 
                             }
                             else if (angle.doubleValue() >= 7){
                                 Level = "Three";
-                                telemetry.addData(String.format("  Level: "), Level);
                                 targetZone = LEVEL_ZONE_3;
-
                             }
                             else {
                                 Level = "Two";
-                                telemetry.addData(String.format("  Level: "), Level);
                                 targetZone = LEVEL_ZONE_2;
 
                             }
+                            telemetry.addData(String.format("  Level: "), Level);
 
                         }
                         telemetry.update();
@@ -323,6 +336,38 @@ int targetZone = 1; // TODO KL Remove this later
         if (tfod != null) {
             tfod.shutdown();
         }
+    }
+    private void SlideMovementPID (int targetPosition) {
+        telemetry.addData("SlideMovementPID", "start SlideMovementPID");
+        robot.slides.rightriser.setTargetPosition(targetPosition);
+        robot.slides.leftriser.setTargetPosition(-targetPosition);
+        robot.slides.rightriser.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.slides.leftriser.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        if(robot.slides.rightriser.isBusy() && repetitions < 800) {
+
+            robot.slides.rightriser.setPower(0.5);
+            robot.slides.leftriser.setPower(0.5);
+            telemetry.addData("inside if", "inside if");
+        }
+        else{
+            telemetry.addData("SlideMovementPID", "inside  else");
+            robot.slides.rightriser.setPower(0);
+            robot.slides.leftriser.setPower(0);
+            repetitions = 0;
+        }
+        currentVelocity = robot.slides.rightriser.getVelocity();
+        currentPos = robot.slides.leftriser.getCurrentPosition();
+        if (currentVelocity > maxVelocity)
+            maxVelocity = currentVelocity;
+
+        telemetry.addData("current velocity", currentVelocity);
+        telemetry.addData("current position", currentPos);
+        telemetry.addData("position delta", currentPos- robot.slides.rightriser.getTargetPosition());
+        telemetry.addData("power", robot.slides.rightriser.getPower());
+        telemetry.addData("repetitions", repetitions);
+        telemetry.update();
+        repetitions++;
     }
 
 }

@@ -58,11 +58,14 @@ public class TechiesOpModeMecanum extends LinearOpMode {
 
     // Declare OpMode members.
     TechiesHardware robot   = new TechiesHardware();
+
     private ElapsedTime runtime = new ElapsedTime();
-    double currentVelocity;
-    double maxVelocity = 0.0;
-    double currentPos;
-    double repetitions = 0;
+
+
+    public DcMotor  leftDrive   = null;
+    public DcMotor  rightDrive  = null;
+    public DcMotor  leftBack    = null;
+    public DcMotor  rightBack   = null;
 
 
     @Override
@@ -168,15 +171,14 @@ public class TechiesOpModeMecanum extends LinearOpMode {
             }
 
             if (gamepad1.dpad_right) {
-                robot.DuckMech.setPosition(3);
-            }
-            else {
+                robot.DuckMech.setPosition(1);
+                sleep(2500);
                 robot.DuckMech.setPosition(.5);
             }
+
             if (gamepad1.dpad_left) {
                 robot.DuckMech.setPosition(-1);
-            }
-            else {
+                sleep(2500);
                 robot.DuckMech.setPosition(.5);
             }
             if (gamepad2.dpad_left) {
@@ -191,6 +193,11 @@ public class TechiesOpModeMecanum extends LinearOpMode {
     }
 
     private void SlideMovementPID (int targetPosition) {
+        double currentVelocity;
+        double maxVelocity = 0.0;
+        double currentPos;
+        double repetitions = 0;
+
         robot.rightriser.setTargetPosition(targetPosition);
         robot.leftriser.setTargetPosition(-targetPosition);
         robot.rightriser.setMode(DcMotor.RunMode.RUN_TO_POSITION);

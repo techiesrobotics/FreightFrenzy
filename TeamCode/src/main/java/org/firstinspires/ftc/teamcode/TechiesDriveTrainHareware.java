@@ -32,7 +32,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -53,7 +52,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Servo channel:  Servo to open left claw:  "left_hand"
  * Servo channel:  Servo to open right claw: "right_hand"
  */
-public class TechiesHardware
+public class TechiesDriveTrainHareware
 {
     /* Public OpMode members. */
     public DcMotor  leftDrive   = null;
@@ -62,22 +61,12 @@ public class TechiesHardware
     public DcMotor  rightBack   = null;
 
 
-    public DcMotor  intake      = null;
-    public DcMotorEx leftriser  = null;
-    public DcMotorEx rightriser = null;
-    public CRServo  leftBucket  = null;
-    public CRServo  rightBucket = null;
-    public Servo  DuckMech   = null;
-    public Servo   horizontalSlide   = null;
-
-
-
     /* local OpMode members. */
     HardwareMap hwMap     =  null;
     private ElapsedTime period  = new ElapsedTime();
 
     /* Constructor */
-    public TechiesHardware(){
+    public TechiesDriveTrainHareware(){
 
     }
 
@@ -94,26 +83,11 @@ public class TechiesHardware
         rightBack    = hwMap.get(DcMotor.class, "backright");
 
 
-        intake    = hwMap.get(DcMotor.class, "intake");
-        leftriser    = hwMap.get(DcMotorEx.class, "leftriser");
-        rightriser    = hwMap.get(DcMotorEx.class, "rightriser");
-        leftBucket    = hwMap.get(CRServo.class, "leftBucket");
-        rightBucket   = hwMap.get(CRServo.class, "rightBucket");
-        DuckMech   = hwMap.get(Servo.class, "DuckMech");
-        horizontalSlide = hwMap.get(Servo.class, "horizontalSlide");
 
-        leftDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+       leftDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         rightDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         leftBack.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.FORWARD);
-
-
-        intake.setDirection(DcMotor.Direction.FORWARD);
-        //DuckMech.setDirection(CRServo.Direction.FORWARD);
-        leftBucket.setDirection(CRServo.Direction.FORWARD);
-        rightBucket.setDirection(CRServo.Direction.FORWARD);
-
-
 
 
         // Set all motors to zero power
@@ -124,12 +98,6 @@ public class TechiesHardware
         rightBack.setPower(0.0);
 
 
-        intake.setPower(0.0);
-       // DuckMech.setPower(0.0);
-        leftBucket.setPower(0.0);
-        rightBucket.setPower(0.0);
-        horizontalSlide.setPosition(0.25);
-
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -138,21 +106,7 @@ public class TechiesHardware
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-
-        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        setUpMotor(leftriser);
-        setUpMotor(rightriser);
-
-
     }
-    private void setUpMotor(DcMotorEx aMotor) {
 
-        aMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        aMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        aMotor.setVelocityPIDFCoefficients(1.20,.220, 0,10.996); //Change these
-        aMotor.setPositionPIDFCoefficients(5.0);
-        aMotor.setTargetPositionTolerance(50); //Maybe change this
-        aMotor.setDirection(DcMotorEx.Direction.FORWARD);
-    }
  }
 

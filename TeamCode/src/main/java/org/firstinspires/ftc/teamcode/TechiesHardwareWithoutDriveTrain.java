@@ -32,7 +32,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -53,106 +52,70 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Servo channel:  Servo to open left claw:  "left_hand"
  * Servo channel:  Servo to open right claw: "right_hand"
  */
-public class TechiesHardware
+public class TechiesHardwareWithoutDriveTrain
 {
     /* Public OpMode members. */
-    public DcMotor  leftDrive   = null;
-    public DcMotor  rightDrive  = null;
-    public DcMotor  leftBack    = null;
-    public DcMotor  rightBack   = null;
-
 
     public DcMotor  intake      = null;
-    public DcMotorEx leftriser  = null;
-    public DcMotorEx rightriser = null;
+
     public CRServo  leftBucket  = null;
     public CRServo  rightBucket = null;
-    public Servo  DuckMech   = null;
+
+
+    public Servo   duckMech   = null;
+
     public Servo   horizontalSlide   = null;
 
 
+    public TechiesSlideHardware slides= null;
 
     /* local OpMode members. */
     HardwareMap hwMap     =  null;
-    private ElapsedTime period  = new ElapsedTime();
+    //private ElapsedTime period  = new ElapsedTime();
 
     /* Constructor */
-    public TechiesHardware(){
+    public TechiesHardwareWithoutDriveTrain(HardwareMap aHWMap){
+        hwMap = aHWMap;
 
-    }
-
-    /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap ahwMap) {
-        // Save reference to Hardware map
-        hwMap = ahwMap;
-
+        slides = new TechiesSlideHardware(hwMap);
         // Define and Initialize Motors
-
-        leftDrive  = hwMap.get(DcMotor.class, "frontleft");
-        rightDrive = hwMap.get(DcMotor.class, "frontright");
-        leftBack  = hwMap.get(DcMotor.class, "backleft");
-        rightBack    = hwMap.get(DcMotor.class, "backright");
 
 
         intake    = hwMap.get(DcMotor.class, "intake");
+/*
         leftriser    = hwMap.get(DcMotorEx.class, "leftriser");
-        rightriser    = hwMap.get(DcMotorEx.class, "rightriser");
+         rightriser    = hwMap.get(DcMotorEx.class, "rightriser");
+*/
+
         leftBucket    = hwMap.get(CRServo.class, "leftBucket");
         rightBucket   = hwMap.get(CRServo.class, "rightBucket");
-        DuckMech   = hwMap.get(Servo.class, "DuckMech");
+
+        duckMech   = hwMap.get(Servo.class, "DuckMech");
+
         horizontalSlide = hwMap.get(Servo.class, "horizontalSlide");
 
-        leftDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
-        rightBack.setDirection(DcMotor.Direction.FORWARD);
-
-
         intake.setDirection(DcMotor.Direction.FORWARD);
-        //DuckMech.setDirection(CRServo.Direction.FORWARD);
+
+        //duckMech.setDirection(CRServo.Direction.FORWARD);
+
         leftBucket.setDirection(CRServo.Direction.FORWARD);
         rightBucket.setDirection(CRServo.Direction.FORWARD);
 
 
-
-
-        // Set all motors to zero power
-
-        leftDrive.setPower(0.0);
-        rightDrive.setPower(0.0);
-        leftBack.setPower(0.0);
-        rightBack.setPower(0.0);
-
-
         intake.setPower(0.0);
-       // DuckMech.setPower(0.0);
+
+       // duckMech.setPower(0.0);
+
         leftBucket.setPower(0.0);
         rightBucket.setPower(0.0);
         horizontalSlide.setPosition(0.25);
 
-
-        // Set all motors to run without encoders.
-        // May want to use RUN_USING_ENCODERS if encoders are installed.
-        leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        setUpMotor(leftriser);
-        setUpMotor(rightriser);
-
-
     }
-    private void setUpMotor(DcMotorEx aMotor) {
 
-        aMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        aMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        aMotor.setVelocityPIDFCoefficients(1.20,.220, 0,10.996); //Change these
-        aMotor.setPositionPIDFCoefficients(5.0);
-        aMotor.setTargetPositionTolerance(50); //Maybe change this
-        aMotor.setDirection(DcMotorEx.Direction.FORWARD);
+    public void setBucketPower(double power){
+        leftBucket.setPower(power);
+        rightBucket.setPower(power);
     }
  }
 

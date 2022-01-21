@@ -5,7 +5,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 
-@Autonomous(name="AutoDuckBlue", group="Pushbot")
+//@Autonomous(name="AutoDuckBlue", group="Pushbot")
 //@Disabled
 public class AutoDuckBlue extends AutoDuck {
 

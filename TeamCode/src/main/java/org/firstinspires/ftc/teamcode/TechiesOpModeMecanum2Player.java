@@ -166,15 +166,13 @@ public class TechiesOpModeMecanum2Player extends LinearOpMode {
             }
 
             if (gamepad1.dpad_right) {
-                robot.DuckMech.setPosition(3);
-            }
-            else {
+                robot.DuckMech.setPosition(1);
+                sleep(2200);
                 robot.DuckMech.setPosition(.5);
             }
             if (gamepad1.dpad_left) {
                 robot.DuckMech.setPosition(-1);
-            }
-            else {
+                sleep(2200);
                 robot.DuckMech.setPosition(.5);
             }
             if (gamepad2.dpad_up) {

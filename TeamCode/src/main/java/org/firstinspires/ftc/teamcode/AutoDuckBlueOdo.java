@@ -12,25 +12,33 @@ public class AutoDuckBlueOdo extends AutoDuckOdo {
 
     @Override
     protected void spinCarousel() {
-        // TODO add code
+        robot.duckMech.setPosition(1);
+        sleep(3000);
+        robot.duckMech.setPosition(.5);
     }
 
     @Override
     protected void goToCarousel() {
-        Pose2d endPoseAllianceHub = new Pose2d(-10,-70, Math.toRadians(270));
+        Pose2d endPoseAllianceHub = new Pose2d(-10,-67, Math.toRadians(270));
         Trajectory goToCarouselDuckBlue = odoDriveTrain.trajectoryBuilder(endPoseAllianceHub)
-                .lineToLinearHeading(new Pose2d(-60, -110, Math.toRadians(270)))
+                .lineToLinearHeading(new Pose2d(-68, -135, Math.toRadians(177)))
                 .build();
 
         odoDriveTrain.followTrajectory(goToCarouselDuckBlue);
+
     }
 
     @Override
     protected void park() {
-        Trajectory parkDuckBlue = odoDriveTrain.trajectoryBuilder(new Pose2d(-60,-110,Math.toRadians(270)))
-                .strafeLeft(25)
+        Trajectory parkDuckBlue = odoDriveTrain.trajectoryBuilder(new Pose2d(-55,-135,Math.toRadians(190)))
+                .lineToLinearHeading(new Pose2d(-68, -30, Math.toRadians(75)))
+                .build();
+        Trajectory parkDuckBlue2 = odoDriveTrain.trajectoryBuilder(new Pose2d(-65,-30,Math.toRadians(75)))
+                .forward(40)
                 .build();
         odoDriveTrain.followTrajectory(parkDuckBlue);
+        odoDriveTrain.followTrajectory(parkDuckBlue2);
+
 
     }
 
@@ -40,7 +48,7 @@ public class AutoDuckBlueOdo extends AutoDuckOdo {
         Pose2d startPose = new Pose2d(-48,-74, Math.toRadians(180));
         odoDriveTrain.setPoseEstimate(startPose);
         Trajectory goToAllianceHubFromStartDuckBlue = odoDriveTrain.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(-10, -70, Math.toRadians(270)))
+                .lineToLinearHeading(new Pose2d(-10, -67, Math.toRadians(270)))
                 .build();
         odoDriveTrain.followTrajectory(goToAllianceHubFromStartDuckBlue);
     }
