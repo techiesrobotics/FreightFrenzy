@@ -41,6 +41,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.List;
 
@@ -78,7 +82,8 @@ public abstract class AutoParentOdo extends LinearOpMode {
     TFObjectDetector tfod;
     String Level;
 
-
+    OpenCvCamera webcam;
+    TechiesPipeline pipeline;
 
     @Override
     public void runOpMode() {
@@ -91,24 +96,57 @@ public abstract class AutoParentOdo extends LinearOpMode {
         robot = new TechiesHardwareWithoutDriveTrain(hardwareMap);
         odoDriveTrain = new SampleMecanumDrive(hardwareMap);
         pidController = new SlideMovementPIDController(telemetry);
-        initVuforia();
-        initTfod();
-        activateCamera();
-        int targetZone = determineZoneLevel();
-        telemetry.addData("Zone Level", targetZone);
+        pipeline = new TechiesPipeline();
+       // initVuforia();
+        //initTfod();
+        //activateCamera();
+       // int targetZone = determineZoneLevel();
 
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+
+        webcam.setPipeline(pipeline);
+
+        // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
+        // out when the RC activity is in portrait. We do our actual image processing assuming
+        // landscape orientation, though.
+
+        webcam.openCameraDeviceAsync(new OpenCvWebcam.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                webcam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+                /*
+                 * This will be called if the camera could not be opened
+                 */
+            }
+        });
+
+        telemetry.addData("before detect target zone", "targetZone");
+        telemetry.update();
+        int targetZone = pipeline.detemineFreightLevel();
+
+        telemetry.addData("after determine target Zone Level", targetZone);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("before wait for start", "before");
+        telemetry.update();
         waitForStart();
 
         doMissions(targetZone);
 
-        shutDownCamera();
+        //shutDownCamera();
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
+
 
     protected void doMissions(int targetZone) {
 

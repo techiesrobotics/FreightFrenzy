@@ -1,91 +1,26 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.openftc.easyopencv.OpenCvWebcam;
-
-@Autonomous(name = "Freight Frenzy CV Object Detection", group = "Concept")
-public class FreightFrenzyPipelineTest extends LinearOpMode {
-    OpenCvCamera webcam;
-    FFPipeline pipeline;
 
 
 
-    @Override
-    public void runOpMode()
-    {
-        /**
-         * NOTE: Many comments have been omitted from this sample for the
-         * sake of conciseness. If you're just starting out with EasyOpenCv,
-         * you should take a look at {@link InternalCamera1Example} or its
-         * webcam counterpart, {@link WebcamExample} first.
-         */
-
-
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        pipeline = new FFPipeline();
-        webcam.setPipeline(pipeline);
-
-        // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
-        // out when the RC activity is in portrait. We do our actual image processing assuming
-        // landscape orientation, though.
-
-        webcam.openCameraDeviceAsync(new OpenCvWebcam.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                webcam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
-            }
-        });
-
-        waitForStart();
-
-        while (opModeIsActive())
-        {
-            telemetry.addData("Freight Location: ", pipeline.getAnalysis());
-            telemetry.addData("Max Average: ", pipeline.getMaximum());
-            telemetry.update();
-
-            // Don't burn CPU cycles busy-looping in this sample
-            sleep(40);
-        }
-    }
-
-
-}
-class  FFPipeline extends OpenCvPipeline {
+class  TechiesPipeline extends OpenCvPipeline {
     /*
      * An enum to define the position
      */
+
     public enum FreightLocation {
         ONE,
         TWO,
         THREE
     }
-
+    private volatile FreightLocation position;
     /*
      * Some color constants
      */
@@ -147,8 +82,8 @@ class  FFPipeline extends OpenCvPipeline {
     Mat Cr = new Mat();
     int avg1, avg2, avg3;
 
-    // Volatile since accessed by OpMode thread w/o synchronization
-    private volatile FreightLocation position = FreightLocation.ONE;
+    // Volatile since accessed by OpMode thread w/o synchronization// Set the default
+
 
     /*
      * This function takes the RGB frame, converts to YCrCb,
@@ -286,14 +221,14 @@ class  FFPipeline extends OpenCvPipeline {
          */
         int maxOneTwo = Math.max(avg1, avg2);
         int max = Math.max(maxOneTwo, avg3);
-
+        position = FreightLocation.ONE; // KL
         /*
          * Now that we found the max, we actually need to go and
          * figure out which sample region that value was from
          */
         if (max == avg1) // Was it from region 1?
         {
-            position = FreightLocation.ONE; // Record our analysis
+            position = FreightLocation.THREE; // Record our analysis
 
             /*
              * Draw a solid rectangle on top of the chosen region.
@@ -319,14 +254,14 @@ class  FFPipeline extends OpenCvPipeline {
                     region2_pointB, // Second point which defines the rectangle
                     YELLOW, // The color the rectangle is drawn in
                     -1); // Negative thickness means solid fill
-        } else if (max == avg3) // Was it from region 3?
-        {
-            position = FreightLocation.THREE;// Record our analysis
+        }
+        /*
+        else if (max == avg3) // Was it from region 3?
 
-            /*
-             * Draw a solid rectangle on top of the chosen region.
-             * Simply a visual aid. Serves no functional purpose.
-             */
+        {
+            position = FreightLocation.ONE;// Record our analysis
+
+
             Imgproc.rectangle(
                     input, // Buffer to draw on
                     region1_pointA, // First point which defines the rectangle
@@ -334,6 +269,8 @@ class  FFPipeline extends OpenCvPipeline {
                     YELLOW, // The color the rectangle is drawn in
                     -1); // Negative thickness means solid fill
         }
+        */
+
 
         /*
          * Render the 'input' buffer to the viewport. But note this is not
@@ -354,18 +291,27 @@ class  FFPipeline extends OpenCvPipeline {
     public int getMaximum() {
         return maximum;
     }
-    public int convert (){
-        if (getAnalysis().equals(FFPipeline.FreightLocation.ONE)){
+
+    public int detemineFreightLevel() {
+        /*
+        if (getAnalysis().equals(FreightLocation.ONE)) {
             return 1;
-        }
-        else if (getAnalysis().equals(FFPipeline.FreightLocation.ONE)){
+        } else if (getAnalysis().equals(FreightLocation.TWO)) {
             return 2;
-        }
-        else if (getAnalysis().equals(FFPipeline.FreightLocation.ONE)){
+        } else if (getAnalysis().equals(FreightLocation.THREE)) {
             return 3;
-        }
-        else {
+        } else {
             return 3;
         }
 
-    }}
+         */
+        if (FreightLocation.ONE.equals(getAnalysis())) {
+            return 1;
+        } else if (FreightLocation.TWO.equals(getAnalysis())) {
+            return 2;
+        } else {
+            return 3;
+        }
+
+    }
+}
