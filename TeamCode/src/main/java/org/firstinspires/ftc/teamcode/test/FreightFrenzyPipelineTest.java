@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -49,7 +48,7 @@ public class FreightFrenzyPipelineTest extends LinearOpMode {
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(960,720, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -95,11 +94,11 @@ class  FFPipeline extends OpenCvPipeline {
     /*
      * The core values which define the location and size of the sample regions
      */
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 105);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(130, 105);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(250, 105);
-    static final int REGION_WIDTH = 30;
-    static final int REGION_HEIGHT = 30;
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(70, 250);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(425, 250);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(840, 250);
+    static final int REGION_WIDTH = 70;
+    static final int REGION_HEIGHT = 70;
 
     /*
      * Points which actually define the sample region rectangles, derived from above values

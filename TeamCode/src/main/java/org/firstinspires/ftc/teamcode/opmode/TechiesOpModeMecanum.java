@@ -27,14 +27,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.TechiesHardware;
 
 
 /**
@@ -50,17 +54,20 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Techies OpMode 2 player", group="Linear Opmode")
+@TeleOp(name="Techies OpMode Mecanum", group="Linear Opmode")
 //@Disabled
-public class TechiesOpModeMecanum2Player extends LinearOpMode {
+public class TechiesOpModeMecanum extends LinearOpMode {
 
     // Declare OpMode members.
     TechiesHardware robot   = new TechiesHardware();
+
     private ElapsedTime runtime = new ElapsedTime();
-    double currentVelocity;
-    double maxVelocity = 0.0;
-    double currentPos;
-    double repetitions = 0;
+
+
+    public DcMotor  leftDrive   = null;
+    public DcMotor  rightDrive  = null;
+    public DcMotor  leftBack    = null;
+    public DcMotor  rightBack   = null;
 
 
     @Override
@@ -87,9 +94,9 @@ public class TechiesOpModeMecanum2Player extends LinearOpMode {
 
             // POV Mode uses left stick to go forward, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.
-            double turn = gamepad2.right_stick_x;
-            double drivefb  = -gamepad2.left_stick_y;
-            double drivelr = gamepad2.left_stick_x;
+            double turn = gamepad1.right_stick_x;
+            double drivefb  = -gamepad1.left_stick_y;
+            double drivelr = gamepad1.left_stick_x;
 
             leftPower    = Range.clip(drivefb + turn + drivelr, -1.0, 1.0) ;
             rightPower   = Range.clip(drivefb - turn - drivelr, -1.0, 1.0) ;
@@ -167,19 +174,20 @@ public class TechiesOpModeMecanum2Player extends LinearOpMode {
 
             if (gamepad1.dpad_right) {
                 robot.DuckMech.setPosition(1);
-                sleep(2200);
+                sleep(2500);
                 robot.DuckMech.setPosition(.5);
-            }
-            if (gamepad1.dpad_left) {
-                robot.DuckMech.setPosition(-1);
-                sleep(2200);
-                robot.DuckMech.setPosition(.5);
-            }
-            if (gamepad2.dpad_up) {
-                robot.horizontalSlide.setPosition(.8);
             }
 
-            if (gamepad2.dpad_down) {
+            if (gamepad1.dpad_left) {
+                robot.DuckMech.setPosition(-1);
+                sleep(2500);
+                robot.DuckMech.setPosition(.5);
+            }
+            if (gamepad2.dpad_left) {
+                robot.horizontalSlide.setPosition(1);
+            }
+
+            if (gamepad2.dpad_right) {
                 robot.horizontalSlide.setPosition(.3);
             }
 
@@ -187,6 +195,11 @@ public class TechiesOpModeMecanum2Player extends LinearOpMode {
     }
 
     private void SlideMovementPID (int targetPosition) {
+        double currentVelocity;
+        double maxVelocity = 0.0;
+        double currentPos;
+        double repetitions = 0;
+
         robot.rightriser.setTargetPosition(targetPosition);
         robot.leftriser.setTargetPosition(-targetPosition);
         robot.rightriser.setMode(DcMotor.RunMode.RUN_TO_POSITION);

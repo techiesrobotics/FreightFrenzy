@@ -60,13 +60,7 @@ public class TechiesSlideHardware
 
     public DcMotorEx leftriser  = null;
     public DcMotorEx rightriser = null;
-    /*
-    public DcMotor  intake      = null;
-    public CRServo  leftBucket  = null;
-    public CRServo  rightBucket = null;
-    public Servo  DuckMech   = null;
-    public Servo   horizontalSlide   = null;
-*/
+
 
 
     /* local OpMode members. */
@@ -93,9 +87,23 @@ public class TechiesSlideHardware
         aMotor.setDirection(DcMotorEx.Direction.FORWARD);
     }
 
-    public void setRiserPower(double power){
-        leftriser.setPower(power);
-        rightriser.setPower(power);
+    public void setRiserPower(double leftRiserPower, double rightRiserPower){
+        leftriser.setPower(leftRiserPower);
+        rightriser.setPower(rightRiserPower);
+    }
+
+    public void setTargetPosition(int leftRiserPosition, int rightRiserPosition){
+        leftriser.setTargetPosition(leftRiserPosition);
+        rightriser.setTargetPosition(rightRiserPosition);
+    }
+
+    public void retractSlides() {
+        rightriser.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        leftriser.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        rightriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftriser.setPower(0);
+        rightriser.setPower(0);
     }
 
  }

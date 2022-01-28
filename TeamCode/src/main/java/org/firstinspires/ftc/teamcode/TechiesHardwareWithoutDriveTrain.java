@@ -62,7 +62,7 @@ public class TechiesHardwareWithoutDriveTrain
     public CRServo  rightBucket = null;
 
 
-    public Servo   duckMech   = null;
+    public Servo  duckMech   = null;
 
     public Servo   horizontalSlide   = null;
 
@@ -113,9 +113,9 @@ public class TechiesHardwareWithoutDriveTrain
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void setBucketPower(double power){
-        leftBucket.setPower(power);
-        rightBucket.setPower(power);
+    public void setBucketPower(double leftBucketPower, double rightBucketPower){
+        leftBucket.setPower(leftBucketPower);
+        rightBucket.setPower(rightBucketPower);
     }
  }
 

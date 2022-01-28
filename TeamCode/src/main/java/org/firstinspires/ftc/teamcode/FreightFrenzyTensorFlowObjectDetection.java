@@ -124,7 +124,7 @@ public class FreightFrenzyTensorFlowObjectDetection extends LinearOpMode {
                 // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
                 // should be set to the value of the images used to create the TensorFlow Object Detection model
                 // (typically 16/9).
-                tfod.setZoom(1.1, 16.0 / 5.0);
+                tfod.setZoom(1, 17.0 / 5.0);
 
 
         }
@@ -132,10 +132,10 @@ public class FreightFrenzyTensorFlowObjectDetection extends LinearOpMode {
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
-        waitForStart();
 
-        if (opModeIsActive()) {
-            while (opModeIsActive()) {
+
+
+        while (!opModeIsActive()) {
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
@@ -153,21 +153,22 @@ public class FreightFrenzyTensorFlowObjectDetection extends LinearOpMode {
                                 recognition.getRight(), recognition.getBottom());
                         Double angle = Double.valueOf( recognition.estimateAngleToObject(AngleUnit.DEGREES));
                         telemetry.addData(String.format("  Angle: "), angle);
+                        if (recognition.getLabel().equals("Duck")){
+                            if (angle.doubleValue() <= -6){
+                                Level = "One";
+                                telemetry.addData(String.format("  Level: "), Level);
+                            }
+                            else if (angle.doubleValue() >= 6){
+                                Level = "Two";
+                                telemetry.addData(String.format("  Level: "), Level);
 
-                        if (angle.doubleValue() <= -7){
-                            Level = "One";
-                            telemetry.addData(String.format("  Level: "), Level);
-                        }
-                        else if (angle.doubleValue() >= 7){
+                            }
+
+                          }
+                        else {
                             Level = "Three";
                             telemetry.addData(String.format("  Level: "), Level);
-
                         }
-                        else {
-                            Level = "Two";
-                            telemetry.addData(String.format("  Level: "), Level);
-                        }
-
 
                         i++;
                       }
@@ -175,7 +176,11 @@ public class FreightFrenzyTensorFlowObjectDetection extends LinearOpMode {
                     }
                 }
             }
-        }
+       // }
+        waitForStart();
+        telemetry.addData("do something", "do things");
+        telemetry.addData("do something", "do things");
+        telemetry.update();
     }
 
     /**
@@ -204,7 +209,7 @@ public class FreightFrenzyTensorFlowObjectDetection extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
             "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.7f;
+        tfodParameters.minResultConfidence = 0.45f;
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 320;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);

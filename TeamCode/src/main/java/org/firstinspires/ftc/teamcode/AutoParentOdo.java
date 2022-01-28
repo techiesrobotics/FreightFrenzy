@@ -41,6 +41,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.opencv.core.Mat;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -60,7 +61,7 @@ public abstract class AutoParentOdo extends LinearOpMode {
     double maxVelocity = 0.0;
     double currentPos;
     double repetitions = 0;
-    SlideMovementPIDController pidController;
+    //SlideMovementPIDController pidController;
     static final double COUNTS_PER_MOTOR_REV = 1440;    // eg: TETRIX Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
@@ -72,7 +73,7 @@ public abstract class AutoParentOdo extends LinearOpMode {
     public static final int LEVEL_ZONE_1 = 1;
     public static final int LEVEL_ZONE_2 = 2;
     public static final int LEVEL_ZONE_3 = 3;
-    public static final int LEVEL_ZONE_DEFAULT = LEVEL_ZONE_1;
+    public static final int LEVEL_ZONE_DEFAULT = LEVEL_ZONE_3;
 
     static final String VUFORIA_KEY =
             " AbfemMf/////AAABmVQ5LwVH3Umfv+Oiv7oNSvcdOBa+ogwEc69mgH/qFNgbn1NXBJsX4J5R6N4SYojjxFB6eHjdTHaT3i9ZymELzgaFrPziL5B/TX2/dkxnIK5dcOjLHOZu2K3jVPYciJnwj20ZmRXSN46Y4uMdzWSJ3X1wgKovNQzZvx+7dljIonRJfLjSF5aSuoTDqEkdcsGTJ92J7jgc5jN53Vml3rAI+qPUTT8qpI8T1enV6NYublcUMpofpovmHsH9kvI+U1h9Rc8cXwbGPlr3PVoKQOwuZA0Y98Jywey6URYTswzpbMw8cWu4PMisB2ujpf0VEjiV6jjofr3OVRj6r5lEJZsnElY2mOhXdgVqJndvXYvCSpyI";
@@ -83,7 +84,7 @@ public abstract class AutoParentOdo extends LinearOpMode {
     String Level;
 
     OpenCvCamera webcam;
-    TechiesPipeline pipeline;
+    //  TechiesPipeline pipeline;
 
     @Override
     public void runOpMode() {
@@ -95,22 +96,22 @@ public abstract class AutoParentOdo extends LinearOpMode {
 
         robot = new TechiesHardwareWithoutDriveTrain(hardwareMap);
         odoDriveTrain = new SampleMecanumDrive(hardwareMap);
-        pidController = new SlideMovementPIDController(telemetry);
-        pipeline = new TechiesPipeline();
-       // initVuforia();
-        //initTfod();
-        //activateCamera();
-       // int targetZone = determineZoneLevel();
+       // pidController = new SlideMovementPIDController(telemetry);
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        initVuforia();
+        initTfod();
+        activateCamera();
+
+        telemetry.addData(">", "Press Play to start op mode");
+        telemetry.update();
+        /*  int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-
+        pipeline = new TechiesPipeline();
         webcam.setPipeline(pipeline);
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
         // out when the RC activity is in portrait. We do our actual image processing assuming
         // landscape orientation, though.
-
         webcam.openCameraDeviceAsync(new OpenCvWebcam.AsyncCameraOpenListener()
         {
             @Override
@@ -122,26 +123,22 @@ public abstract class AutoParentOdo extends LinearOpMode {
             @Override
             public void onError(int errorCode)
             {
-                /*
+
                  * This will be called if the camera could not be opened
-                 */
+
             }
-        });
+        }); */
+        //int targetZone = pipeline.detemineFreightLevel();
 
-        telemetry.addData("before detect target zone", "targetZone");
-        telemetry.update();
-        int targetZone = pipeline.detemineFreightLevel();
+        //int targetZone = 3;
+        int targetZone = determineZoneLevel();
 
-        telemetry.addData("after determine target Zone Level", targetZone);
-
-        // Wait for the game to start (driver presses PLAY)
-        telemetry.addData("before wait for start", "before");
-        telemetry.update();
         waitForStart();
+
 
         doMissions(targetZone);
 
-        //shutDownCamera();
+        shutDownCamera();
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -154,133 +151,67 @@ public abstract class AutoParentOdo extends LinearOpMode {
         dropPreloadFreight(targetZone);
         doAdditionalMissions(targetZone);
         park();
-
-
     }
 
-    protected abstract void doAdditionalMissions(int targetZone) ;
+    protected abstract void doAdditionalMissions(int targetZone);
+
     protected abstract void park();
-    protected abstract void goToAllianceHubFromStart() ;
+
+    protected abstract void goToAllianceHubFromStart();
+
     protected void dropPreloadFreight(int targetZone) {
         telemetry.addData("dropPreloadFreight", "dropPreloadFreight");
 
         if (LEVEL_ZONE_1 == targetZone) {
-            robot.leftBucket.setPower(-.2);
-            robot.rightBucket.setPower(-.2);
+            robot.setBucketPower(-.2,.2);
             sleep(350);
-            robot.leftBucket.setPower(0);
-            robot.rightBucket.setPower(0);
+            robot.setBucketPower(0,0);
             SlideMovementPID(100);
             robot.horizontalSlide.setPosition(.8);
             sleep(1000);
-            robot.leftBucket.setPower(-.2);
-            robot.rightBucket.setPower(-.2);
+            robot.setBucketPower(-.2,.2);
             sleep(800);
-            robot.leftBucket.setPower(.2);
-            robot.rightBucket.setPower(.2);
+            robot.setBucketPower(.2,-.2);
             sleep(600);
             robot.horizontalSlide.setPosition(.3);
-            robot.slides.rightriser.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-            robot.slides.leftriser.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-            robot.slides.rightriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.slides.leftriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.slides.leftriser.setPower(0);
-            robot.slides.rightriser.setPower(0);
+            robot.slides.retractSlides();
 
         } else if (LEVEL_ZONE_2 == targetZone) {
-            robot.leftBucket.setPower(-.2);
-            robot.rightBucket.setPower(-.2);
+            robot.setBucketPower(-.2,.2);
             sleep(350);
-            robot.leftBucket.setPower(0);
-            robot.rightBucket.setPower(0);
+            robot.setBucketPower(0,0);
             SlideMovementPID(300);
             robot.horizontalSlide.setPosition(.8);
             sleep(1000);
-            robot.leftBucket.setPower(-.2);
-            robot.rightBucket.setPower(-.2);
+            robot.setBucketPower(-.2,.2);
             sleep(1000);
-            robot.leftBucket.setPower(.2);
-            robot.rightBucket.setPower(.2);
+            robot.setBucketPower(.2,-.2);
             sleep(150);
             robot.horizontalSlide.setPosition(.3);
             sleep(100);
-            robot.slides.rightriser.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-            robot.slides.leftriser.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-            robot.slides.rightriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.slides.leftriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.slides.leftriser.setPower(0);
-            robot.slides.rightriser.setPower(0);
-
-
+            robot.slides.retractSlides();
         } else if (LEVEL_ZONE_3 == targetZone) {
-            robot.leftBucket.setPower(-.2);
-            robot.rightBucket.setPower(-.2);
+            robot.setBucketPower(-.2,.2);
             sleep(350);
-            robot.leftBucket.setPower(0);
-            robot.rightBucket.setPower(0);
+            robot.setBucketPower(0,0);
             SlideMovementPID(470);
             robot.horizontalSlide.setPosition(.8);
             sleep(1000);
-            robot.leftBucket.setPower(-.2);
-            robot.rightBucket.setPower(-.2);
+            robot.setBucketPower(-.2,.2);
             sleep(700);
-            robot.leftBucket.setPower(.1);
-            robot.rightBucket.setPower(.1);
+            robot.setBucketPower(.1,-.1);
             sleep(175);
             robot.horizontalSlide.setPosition(.3);
             sleep(100);
-            robot.slides.rightriser.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-            robot.slides.leftriser.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-            robot.slides.rightriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.slides.leftriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.slides.leftriser.setPower(0);
-            robot.slides.rightriser.setPower(0);
-
-
+            robot.slides.retractSlides();
         }
 
-
-        /*
-        robot.setBucketPower(-.2);
-        sleep(350);
-        robot.setBucketPower(0);
-
-
-        if (LEVEL_ZONE_1 == targetZone) {
-          // TODO KL TEST
-              SlideMovementPID(200);  // different
-            //pidController.slideMovementPID(robot.slides, 200);
-        } else if (LEVEL_ZONE_2 == targetZone) {
-            SlideMovementPID(300);
-            // TODO KL TEST
-         //   pidController.slideMovementPID(robot.slides, 300);
-        } else if (LEVEL_ZONE_3 == targetZone) {
-             SlideMovementPID(450);
-            // TODO KL TEST
-            //pidController.slideMovementPID(robot.slides, 450);
-        }
-        robot.horizontalSlide.setPosition(.8);
-        sleep(1000);
-        robot.setBucketPower(-.2); // TODO is this the same across 3? .2 or -.2?
-        sleep(1000);
-        robot.setBucketPower(.2);
-
-        if (LEVEL_ZONE_1 == targetZone) {
-            sleep(600);
-        } else if (LEVEL_ZONE_2 == targetZone) {
-            sleep(150);
-        } else if (LEVEL_ZONE_3 == targetZone) {
-            sleep(150);
-        }
-        robot.horizontalSlide.setPosition(.3);
-        sleep(100);
-        robot.slides.setRiserPower(0);
-
-         */
 
     }
 
-    private void initVuforia() {
+
+
+    protected void initVuforia() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          */
@@ -292,27 +223,27 @@ public abstract class AutoParentOdo extends LinearOpMode {
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
-
-        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
     }
 
-    private void initTfod() {
+    protected void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.7f;
+        tfodParameters.minResultConfidence = 0.45f;
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 320;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT);
     }
+
     protected void activateCamera() {
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
          * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
          **/
+        telemetry.addData(">", "in activate camera");
         if (tfod != null) {
-            telemetry.addData(">", "activate camera");
+            telemetry.addData(">", "activate camera != null");
             tfod.activate();
 
             // The TensorFlow software will scale the input images from the camera to a lower resolution.
@@ -321,52 +252,112 @@ public abstract class AutoParentOdo extends LinearOpMode {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(1.1, 16.0 / 5.0);
+            tfod.setZoom(1.0, 17.0 / 5.0);
+        } else {
+            telemetry.addData(">", "activate camera == null");
         }
     }
 
-    protected int determineZoneLevel() {
-        int targetZone = LEVEL_ZONE_DEFAULT;
-        if (opModeIsActive()) {
-            if (tfod != null) {
-                    // getUpdatedRecognitions() will return null if no new information is available since
-                    // the last time that call was made.
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                    if (updatedRecognitions != null) {
-                        telemetry.addData("# Object Detected", updatedRecognitions.size());
-                        // step through the list of recognitions and display boundary info.
-                        for (Recognition recognition : updatedRecognitions) {
-                            telemetry.addData(String.format("label (%d)"), recognition.getLabel());
-                            telemetry.addData(String.format("  left,top (%d)"), "%.03f , %.03f",
-                                    recognition.getLeft(), recognition.getTop());
-                            telemetry.addData(String.format("  right,bottom (%d)"), "%.03f , %.03f",
-                                    recognition.getRight(), recognition.getBottom());
-                            Double angle = Double.valueOf( recognition.estimateAngleToObject(AngleUnit.DEGREES));
-                            telemetry.addData(String.format("  Angle: "), angle);
+    protected  int determineZoneLevel()
+    {
+            int targetZone = LEVEL_ZONE_DEFAULT;
+          // if(opModeIsActive()) {
+                while (!opModeIsActive()) {
+                    if (tfod != null) {
+                        // getUpdatedRecognitions() will return null if no new information is available since
+                        // the last time that call was made.
+                        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                        if (updatedRecognitions != null) {
+                            telemetry.addData("# Object Detected", updatedRecognitions.size());
 
-                            // TODO wrong logic here KL
-                            if (angle.doubleValue() <= -7){
-                                Level = "One";
-                                targetZone = LEVEL_ZONE_1;
+                            // step through the list of recognitions and display boundary info.
+                            int i = 0;
+                            for (Recognition recognition : updatedRecognitions) {
+                                telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                                telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                                        recognition.getLeft(), recognition.getTop());
+                                telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                                        recognition.getRight(), recognition.getBottom());
+                                Double angle = Double.valueOf(recognition.estimateAngleToObject(AngleUnit.DEGREES));
+                                telemetry.addData(String.format("  Angle: "), angle);
+                                if (recognition.getLabel().equals("Duck")) {
+                                    if (angle.doubleValue() <= -6) {
+                                        Level = "One";
+                                        targetZone = LEVEL_ZONE_1;
+                                        telemetry.addData(String.format("  Level: "), Level);
+                                    } else if (angle.doubleValue() >= 6) {
+                                        Level = "Two";
+                                        targetZone = LEVEL_ZONE_2;
+                                        telemetry.addData(String.format("  Level: "), Level);
 
+                                    }
+
+                                } else {
+                                    Level = "Three";
+                                    telemetry.addData(String.format("  Level: "), Level);
+                                }
+
+
+                                i++;
                             }
-                            else if (angle.doubleValue() >= 7){
-                                Level = "Three";
-                                targetZone = LEVEL_ZONE_3;
-                            }
-                            else {
-                                Level = "Two";
-                                targetZone = LEVEL_ZONE_2;
-
-                            }
-                            telemetry.addData(String.format("  Level: "), Level);
-
+                            telemetry.update();
                         }
-                        telemetry.update();
                     }
-                }
-            }
+                    }
+                    return targetZone;
 
+    }
+
+
+    protected int determineZoneLevel2() {
+        int targetZone = LEVEL_ZONE_DEFAULT;
+        telemetry.addData("  inside determineZoneLevel default: ",targetZone );
+      if (opModeIsActive()) {
+          while (opModeIsActive()) {
+              telemetry.addData("  opModeIsActive: ", "is active");
+              if (tfod != null) {
+                  // getUpdatedRecognitions() will return null if no new information is available since
+                  // the last time that call was made.
+                  List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                  if (updatedRecognitions != null) {
+                      telemetry.addData("# Object Detected", updatedRecognitions.size());
+                      // step through the list of recognitions and display boundary info.
+                      for (Recognition recognition : updatedRecognitions) {
+                          telemetry.addData(String.format("label (%d)"), recognition.getLabel());
+                          telemetry.addData(String.format("  left,top (%d)"), "%.03f , %.03f",
+                                  recognition.getLeft(), recognition.getTop());
+                          telemetry.addData(String.format("  right,bottom (%d)"), "%.03f , %.03f",
+                                  recognition.getRight(), recognition.getBottom());
+                          Double angle = Double.valueOf(recognition.estimateAngleToObject(AngleUnit.DEGREES));
+                          telemetry.addData(String.format("  Angle: "), angle);
+                          if (recognition.getLabel().equals("Duck")) {
+                              if (angle.doubleValue() <= -6) {
+                                  //Level = "One";
+                                  targetZone = LEVEL_ZONE_1;
+
+                              } else if (angle.doubleValue() >= 6) {
+                                  //   Level = "Two";
+                                  targetZone = LEVEL_ZONE_2;
+                              }
+                          }
+
+                      }
+                      telemetry.addData(String.format("Level: "), targetZone);
+                  } else {
+                      //Level = "Three";
+                      targetZone = LEVEL_ZONE_3;
+                      telemetry.addData(String.format("  Level: "), targetZone);
+
+                  }
+                  //  telemetry.update();
+
+
+              } else {
+                  telemetry.addData(" in else condition tfod is null ", "tfod is null");
+
+              }
+          }
+      }
 
         return targetZone;
     }
@@ -375,7 +366,7 @@ public abstract class AutoParentOdo extends LinearOpMode {
             tfod.shutdown();
         }
     }
-    private void SlideMovementPID (int targetPosition) {
+    protected void SlideMovementPID (int targetPosition) {
         telemetry.addData("SlideMovementPID", "start SlideMovementPID");
         robot.slides.rightriser.setTargetPosition(targetPosition);
         robot.slides.leftriser.setTargetPosition(-targetPosition);

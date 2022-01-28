@@ -31,8 +31,8 @@ class  TechiesPipeline extends OpenCvPipeline {
      * The core values which define the location and size of the sample regions
      */
     static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 105);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(130, 105);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(250, 105);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(150, 105);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(300, 105);
     static final int REGION_WIDTH = 30;
     static final int REGION_HEIGHT = 30;
 
@@ -221,7 +221,7 @@ class  TechiesPipeline extends OpenCvPipeline {
          */
         int maxOneTwo = Math.max(avg1, avg2);
         int max = Math.max(maxOneTwo, avg3);
-        position = FreightLocation.ONE; // KL
+
         /*
          * Now that we found the max, we actually need to go and
          * figure out which sample region that value was from
@@ -255,7 +255,7 @@ class  TechiesPipeline extends OpenCvPipeline {
                     YELLOW, // The color the rectangle is drawn in
                     -1); // Negative thickness means solid fill
         }
-        /*
+
         else if (max == avg3) // Was it from region 3?
 
         {
@@ -269,7 +269,7 @@ class  TechiesPipeline extends OpenCvPipeline {
                     YELLOW, // The color the rectangle is drawn in
                     -1); // Negative thickness means solid fill
         }
-        */
+
 
 
         /*
