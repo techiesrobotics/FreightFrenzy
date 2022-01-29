@@ -53,7 +53,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Servo channel:  Servo to open left claw:  "left_hand"
  * Servo channel:  Servo to open right claw: "right_hand"
  */
-public class TechiesHardware
+public class ZZZTechiesHardware
 {
     /* Public OpMode members. */
     public DcMotor  leftDrive   = null;
@@ -77,7 +77,7 @@ public class TechiesHardware
     private ElapsedTime period  = new ElapsedTime();
 
     /* Constructor */
-    public TechiesHardware(){
+    public ZZZTechiesHardware(){
 
     }
 

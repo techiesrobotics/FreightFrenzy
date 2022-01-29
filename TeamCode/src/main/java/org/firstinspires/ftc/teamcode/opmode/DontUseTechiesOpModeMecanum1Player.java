@@ -29,14 +29,13 @@
 
 package org.firstinspires.ftc.teamcode.opmode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.TechiesHardware;
+import org.firstinspires.ftc.teamcode.ZZZTechiesHardware;
 
 
 /**
@@ -52,13 +51,21 @@ import org.firstinspires.ftc.teamcode.TechiesHardware;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Techies OpMode", group="Linear Opmode")
+//@TeleOp(name="Techies OpMode Mecanum", group="Linear Opmode")
 //@Disabled
-public class TechiesOpMode extends LinearOpMode {
+public class DontUseTechiesOpModeMecanum1Player extends LinearOpMode {
 
     // Declare OpMode members.
-    TechiesHardware robot   = new TechiesHardware();
+    ZZZTechiesHardware robot   = new ZZZTechiesHardware();
+
     private ElapsedTime runtime = new ElapsedTime();
+
+
+    public DcMotor  leftDrive   = null;
+    public DcMotor  rightDrive  = null;
+    public DcMotor  leftBack    = null;
+    public DcMotor  rightBack   = null;
+
 
     @Override
     public void runOpMode() {
@@ -84,12 +91,14 @@ public class TechiesOpMode extends LinearOpMode {
 
             // POV Mode uses left stick to go forward, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.
-            double drive = -gamepad1.left_stick_y;
-            double turn  =  gamepad1.right_stick_x;
-            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-            backleftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-            backrightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
+            double turn = gamepad1.right_stick_x;
+            double drivefb  = -gamepad1.left_stick_y;
+            double drivelr = gamepad1.left_stick_x;
+
+            leftPower    = Range.clip(drivefb + turn + drivelr, -1.0, 1.0) ;
+            rightPower   = Range.clip(drivefb - turn - drivelr, -1.0, 1.0) ;
+            backleftPower   = Range.clip(drivefb + turn - drivelr, -1.0, 1.0) ;
+            backrightPower   = Range.clip(drivefb - turn + drivelr, -1.0, 1.0) ;
 
             // Tank Mode uses one stick to control each wheel.
             // - This requires no math, but it is hard to drive forward slowly and keep straight.
@@ -106,7 +115,114 @@ public class TechiesOpMode extends LinearOpMode {
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+
             telemetry.update();
+
+
+            if (gamepad1.right_bumper) {
+                robot.intake.setPower(-1);
+            }
+            else {
+                robot.intake.setPower(0);
+            }
+            if (gamepad1.left_bumper) {
+                robot.intake.setPower(1);
+            }
+            else {
+                robot.intake.setPower(0);
+            }
+
+            if (gamepad1.a) {
+                SlideMovementPID(20);
+            }
+
+            if (gamepad1.b) {
+                SlideMovementPID(150);
+            }
+            if (gamepad1.y) {
+                SlideMovementPID(400);
+            }
+            if (gamepad1.x) {
+                robot.rightriser.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+                robot.leftriser.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+                robot.rightriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                robot.leftriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                robot.leftriser.setPower(0);
+                robot.rightriser.setPower(0);
+
+            }
+
+            if (gamepad1.dpad_up) {
+                robot.leftBucket.setPower(.5);
+                robot.rightBucket.setPower(-.5);
+            }
+            else {
+                robot.leftBucket.setPower(0);
+                robot.rightBucket.setPower(0);
+            }
+            if (gamepad1.dpad_down) {
+                robot.leftBucket.setPower(-.5);
+                robot.rightBucket.setPower(.5);
+            }
+            else {
+                robot.leftBucket.setPower(0);
+                robot.rightBucket.setPower(0);
+            }
+
+            if (gamepad1.dpad_right) {
+                robot.DuckMech.setPosition(1);
+                sleep(2500);
+                robot.DuckMech.setPosition(.5);
+            }
+
+            if (gamepad1.dpad_left) {
+                robot.DuckMech.setPosition(-1);
+                sleep(2500);
+                robot.DuckMech.setPosition(.5);
+            }
+            if (gamepad2.dpad_left) {
+                robot.horizontalSlide.setPosition(1);
+            }
+
+            if (gamepad2.dpad_right) {
+                robot.horizontalSlide.setPosition(.3);
+            }
+
         }
+    }
+
+    private void SlideMovementPID (int targetPosition) {
+        double currentVelocity;
+        double maxVelocity = 0.0;
+        double currentPos;
+        double repetitions = 0;
+
+        robot.rightriser.setTargetPosition(targetPosition);
+        robot.leftriser.setTargetPosition(-targetPosition);
+        robot.rightriser.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.leftriser.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        if(robot.rightriser.isBusy() && repetitions < 800) {
+            robot.rightriser.setPower(0.5);
+            robot.leftriser.setPower(0.5);
+
+        }
+        else{
+            robot.rightriser.setPower(0);
+            robot.leftriser.setPower(0);
+            repetitions = 0;
+        }
+        currentVelocity = robot.rightriser.getVelocity();
+        currentPos = robot.leftriser.getCurrentPosition();
+        if (currentVelocity > maxVelocity)
+            maxVelocity = currentVelocity;
+
+        telemetry.addData("current velocity", currentVelocity);
+        telemetry.addData("current position", currentPos);
+        telemetry.addData("position delta", currentPos- robot.rightriser.getTargetPosition());
+        telemetry.addData("power", robot.rightriser.getPower());
+        telemetry.addData("repetitions", repetitions);
+        telemetry.update();
+        repetitions++;
     }
 }

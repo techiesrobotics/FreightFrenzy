@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -84,7 +85,7 @@ public class TechiesSlideHardware
         aMotor.setVelocityPIDFCoefficients(1.20,.220, 0,10.996); //Change these
         aMotor.setPositionPIDFCoefficients(5.0);
         aMotor.setTargetPositionTolerance(50); //Maybe change this
-        aMotor.setDirection(DcMotorEx.Direction.FORWARD);
+        aMotor.setDirection(DcMotorEx.Direction.REVERSE);
     }
 
     public void setRiserPower(double leftRiserPower, double rightRiserPower){

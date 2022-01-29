@@ -58,7 +58,7 @@ import java.util.List;
  */
 @Autonomous(name = "BlueAllianceCarousel", group = "Concept")
 //@Disabled
-public class AutoBlueAllianceCarousel extends LinearOpMode {
+public class AutoBlueAllianceCarouselTensorFlow extends LinearOpMode {
 
     protected static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
     protected static final String[] LABELS = {

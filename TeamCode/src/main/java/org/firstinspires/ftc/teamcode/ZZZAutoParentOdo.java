@@ -51,7 +51,7 @@ import java.util.List;
 
 
 //@Disabled
-public abstract class AutoParentOdo extends LinearOpMode {
+public abstract class ZZZAutoParentOdo extends LinearOpMode {
 
     /* Declare OpMode members. */
     SampleMecanumDrive odoDriveTrain;

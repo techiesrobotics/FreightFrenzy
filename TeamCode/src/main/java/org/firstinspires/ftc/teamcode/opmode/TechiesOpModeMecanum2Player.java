@@ -32,33 +32,20 @@ package org.firstinspires.ftc.teamcode.opmode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.TechiesHardware;
-
-
-/**
- * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
- * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
- * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all linear OpModes contain.
- *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
+import org.firstinspires.ftc.teamcode.TechiesDriveTrainHardware;
+import org.firstinspires.ftc.teamcode.TechiesHardwareWithoutDriveTrain;
 
 @TeleOp(name="Techies OpMode 2 player", group="Linear Opmode")
-//@Disabled
 public class TechiesOpModeMecanum2Player extends LinearOpMode {
 
     // Declare OpMode members.
-    TechiesHardware robot   = new TechiesHardware();
+    TechiesDriveTrainHardware robot   = new TechiesDriveTrainHardware();
     private ElapsedTime runtime = new ElapsedTime();
+    TechiesHardwareWithoutDriveTrain robotCore ;
+
     double currentVelocity;
     double maxVelocity = 0.0;
     double currentPos;
@@ -67,6 +54,8 @@ public class TechiesOpModeMecanum2Player extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        robotCore = new TechiesHardwareWithoutDriveTrain(hardwareMap);
+
         robot.init(hardwareMap);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -84,11 +73,6 @@ public class TechiesOpModeMecanum2Player extends LinearOpMode {
             double backleftPower;
             double backrightPower;
 
-            // Choose to drive using either Tank Mode, or POV Mode
-            // Comment out the method that's not used.  The default below is POV.
-
-            // POV Mode uses left stick to go forward, and right stick to turn.
-            // - This uses basic math to combine motions and is easier to drive straight.
             double turn = gamepad2.right_stick_x;
             double drivefb  = -gamepad2.left_stick_y;
             double drivelr = gamepad2.left_stick_x;
@@ -97,11 +81,6 @@ public class TechiesOpModeMecanum2Player extends LinearOpMode {
             rightPower   = Range.clip(drivefb - turn - drivelr, -1.0, 1.0) ;
             backleftPower   = Range.clip(drivefb + turn - drivelr, -1.0, 1.0) ;
             backrightPower   = Range.clip(drivefb - turn + drivelr, -1.0, 1.0) ;
-
-            // Tank Mode uses one stick to control each wheel.
-            // - This requires no math, but it is hard to drive forward slowly and keep straight.
-            // leftPower  = -gamepad1.left_stick_y ;
-            // rightPower = -gamepad1.right_stick_y ;
 
             // Send calculated power to wheels
             robot.leftDrive.setPower(leftPower);
@@ -113,21 +92,19 @@ public class TechiesOpModeMecanum2Player extends LinearOpMode {
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-
             telemetry.update();
 
-
             if (gamepad1.right_bumper) {
-                robot.intake.setPower(-1);
+                robotCore.intake.setPower(-1);
             }
             else {
-                robot.intake.setPower(0);
+                robotCore.intake.setPower(0);
             }
             if (gamepad1.left_bumper) {
-                robot.intake.setPower(1);
+                robotCore.intake.setPower(1);
             }
             else {
-                robot.intake.setPower(0);
+                robotCore.intake.setPower(0);
             }
 
             if (gamepad1.a) {
@@ -141,78 +118,64 @@ public class TechiesOpModeMecanum2Player extends LinearOpMode {
                 SlideMovementPID(400);
             }
             if (gamepad1.x) {
-                robot.rightriser.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-                robot.leftriser.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-                robot.rightriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot.leftriser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot.leftriser.setPower(0);
-                robot.rightriser.setPower(0);
-
+                robotCore.slides.retractSlides();
             }
 
             if (gamepad1.dpad_up) {
-                robot.leftBucket.setPower(.45);
-                robot.rightBucket.setPower(-.45);
+                robotCore.setBucketPower(.45, -.45);
+            } else {
+                robotCore.setBucketPower(0,0);
             }
-            else {
-                robot.leftBucket.setPower(0);
-                robot.rightBucket.setPower(0);
-            }
+
             if (gamepad1.dpad_down) {
-                robot.leftBucket.setPower(-.45);
-                robot.rightBucket.setPower(.45);
-            }
-            else {
-                robot.leftBucket.setPower(0);
-                robot.rightBucket.setPower(0);
+                robotCore.setBucketPower(-.45, .45);
+            } else {
+                robotCore.setBucketPower(0,0);
             }
 
             if (gamepad1.dpad_right) {
-                robot.DuckMech.setPosition(1);
+                robotCore.duckMech.setPosition(1);
                 sleep(2500);
-                robot.DuckMech.setPosition(.5);
+                robotCore.duckMech.setPosition(.5);
             }
             if (gamepad1.dpad_left) {
-                robot.DuckMech.setPosition(-1);
+                robotCore.duckMech.setPosition(-1);
                 sleep(2500);
-                robot.DuckMech.setPosition(.5);
+                robotCore.duckMech.setPosition(.5);
             }
             if (gamepad2.dpad_up) {
-                robot.horizontalSlide.setPosition(.8);
+                robotCore.horizontalSlide.setPosition(.8);
             }
 
             if (gamepad2.dpad_down) {
-                robot.horizontalSlide.setPosition(.3);
+                robotCore.horizontalSlide.setPosition(.3);
             }
 
         }
     }
 
-    private void SlideMovementPID (int targetPosition) {
-        robot.rightriser.setTargetPosition(targetPosition);
-        robot.leftriser.setTargetPosition(-targetPosition);
-        robot.rightriser.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.leftriser.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    protected void SlideMovementPID (int targetPosition) {
+        telemetry.addData("SlideMovementPID", "start SlideMovementPID");
+        robotCore.slides.setTargetPosition(targetPosition,-targetPosition);
+        robotCore.slides.rightriser.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotCore.slides.leftriser.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        if(robot.rightriser.isBusy() && repetitions < 800) {
-            robot.rightriser.setPower(0.5);
-            robot.leftriser.setPower(0.5);
-
+        if (robotCore.slides.rightriser.isBusy() && repetitions < 800) {
+            robotCore.slides.setRiserPower(0.5,0.5);
         }
-        else{
-            robot.rightriser.setPower(0);
-            robot.leftriser.setPower(0);
+        else {
+            robotCore.slides.setRiserPower(0,0);
             repetitions = 0;
         }
-        currentVelocity = robot.rightriser.getVelocity();
-        currentPos = robot.leftriser.getCurrentPosition();
+        currentVelocity = robotCore.slides.rightriser.getVelocity();
+        currentPos = robotCore.slides.leftriser.getCurrentPosition();
         if (currentVelocity > maxVelocity)
             maxVelocity = currentVelocity;
 
         telemetry.addData("current velocity", currentVelocity);
         telemetry.addData("current position", currentPos);
-        telemetry.addData("position delta", currentPos- robot.rightriser.getTargetPosition());
-        telemetry.addData("power", robot.rightriser.getPower());
+        telemetry.addData("position delta", currentPos- robotCore.slides.rightriser.getTargetPosition());
+        telemetry.addData("power", robotCore.slides.rightriser.getPower());
         telemetry.addData("repetitions", repetitions);
         telemetry.update();
         repetitions++;

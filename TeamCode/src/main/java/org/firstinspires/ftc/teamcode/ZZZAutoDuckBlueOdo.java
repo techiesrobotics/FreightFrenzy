@@ -5,12 +5,11 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 
-@Autonomous(name="AutoDuckBlueOdo", group="Pushbot")
+//@Autonomous(name="AutoDuckBlueOdo", group="Pushbot")
 //@Disabled
-//public class AutoDuckBlueOdo extends AutoDuckOdo {
 
-public class AutoDuckBlueOdo extends AutoBlueAllianceCarousel {
-    AutoDuckBlueOdo(){
+public class ZZZAutoDuckBlueOdo extends AutoBlueAllianceCarouselTensorFlow {
+    ZZZAutoDuckBlueOdo(){
         super();
     }
     @Override

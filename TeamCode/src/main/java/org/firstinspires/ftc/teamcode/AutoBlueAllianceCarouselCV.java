@@ -139,11 +139,8 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
 
         telemetry.addData("Target Zone", targetLevel);
         telemetry.update();
-        telemetry.addData("do something", "do things");
 
         doMissions(targetLevel);
-        telemetry.addData("do missions", "finish mission");
-        telemetry.update();
     }
 
     protected void dropPreloadFreight()   {
@@ -151,9 +148,6 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
         telemetry.update();
 
         if (Constants.TARGET_LEVEL_BOTTOM == targetLevel) {
-            telemetry.addData("dosomething for zone 1", "do something for zone 1");
-            telemetry.update();
-
             robot.setBucketPower(-.2,.2);
             sleep(350);
             robot.setBucketPower(0,0);
@@ -169,9 +163,6 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
 
 
         } else if (Constants.TARGET_LEVEL_MIDDLE == targetLevel) {
-            telemetry.addData("dosomething for zone 2", "do something for zone 2");
-            telemetry.update();
-
             robot.setBucketPower(-.2,.2);
             sleep(350);
             robot.setBucketPower(0,0);
@@ -187,8 +178,6 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
             robot.slides.retractSlides();
 
         } else {
-            telemetry.addData("dosomething for zone 3", "do something for zone 3");
-            telemetry.update();
             robot.setBucketPower(-.2,.2);
             sleep(350);
             robot.setBucketPower(0,0);
@@ -205,10 +194,6 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
         }
 
 
-        telemetry.addData("finish", "finish everythimg");
-        telemetry.update();
-
-
     }
     protected void SlideMovementPID (int targetPosition) {
         telemetry.addData("SlideMovementPID", "start SlideMovementPID");
@@ -217,14 +202,13 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
         robot.slides.rightriser.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.slides.leftriser.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        if(robot.slides.rightriser.isBusy() && repetitions < 800) {
+        if (robot.slides.rightriser.isBusy() && repetitions < 800) {
 
             robot.slides.rightriser.setPower(0.5);
             robot.slides.leftriser.setPower(0.5);
-            telemetry.addData("inside if", "inside if");
+
         }
-        else{
-            telemetry.addData("SlideMovementPID", "inside  else");
+        else {
             robot.slides.rightriser.setPower(0);
             robot.slides.leftriser.setPower(0);
             repetitions = 0;
@@ -262,12 +246,7 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
                 .build();
         odoDriveTrain.followTrajectory(goToAllianceHubFromStartDuckBlue);
     }
-/*
-    protected void goToCarousel() {telemetry.addData("goto carousel from parent", "parent");};
-    protected void spinCarousel() {telemetry.addData("spinCarousel from parent", "parent");};
-    protected void park() {{telemetry.addData("park from parent", "parent");};};
 
-   */
     protected void goToCarousel() {
         Pose2d endPoseAllianceHub = new Pose2d(-27,-50, Math.toRadians(180));
         Trajectory goToCarouselDuckBlue = odoDriveTrain.trajectoryBuilder(endPoseAllianceHub)
