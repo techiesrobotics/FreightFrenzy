@@ -89,7 +89,19 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
         robot = new TechiesHardwareWithoutDriveTrain(hardwareMap);
         odoDriveTrain = new SampleMecanumDrive(hardwareMap);
 
-        // Wait for the game to begin
+        setupCamera();
+
+        targetLevel = determineTargetLevel();
+        telemetry.addData("Target Level", targetLevel);
+        telemetry.addData(">", "Press Play to start op mode");
+        telemetry.update();
+
+        waitForStart();
+
+        doMissions(targetLevel);
+    }
+
+    private void setupCamera() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         pipeline = new TechiesPipeline();
@@ -111,20 +123,15 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
                  */
             }
         });
-        //targetZone = determineLevel();
-        telemetry.addData(">", "Press Play to start op mode");
+    }
 
-        telemetry.update();
-
+    private int determineTargetLevel() {
         while (!opModeIsActive())
         {
             telemetry.addData("Freight Location: ", pipeline.getAnalysis());
-
             telemetry.update();
-
             // Don't burn CPU cycles busy-looping in this sample
             sleep(40);
-
         }
         if (TechiesPipeline.FreightLocation.ONE.equals(pipeline.getAnalysis())){
             targetLevel =Constants.TARGET_LEVEL_BOTTOM;
@@ -135,12 +142,7 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
         else if (TechiesPipeline.FreightLocation.THREE.equals(pipeline.getAnalysis())){
             targetLevel =Constants.TARGET_LEVEL_TOP;
         }
-        waitForStart();
-
-        telemetry.addData("Target Zone", targetLevel);
-        telemetry.update();
-
-        doMissions(targetLevel);
+        return targetLevel;
     }
 
     protected void dropPreloadFreight()   {
@@ -232,7 +234,6 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
 
         goToAllianceHubFromStart();
         dropPreloadFreight();
-       // doAdditionalMissions(targetZone);
         goToCarousel();
         spinCarousel();
         park();
