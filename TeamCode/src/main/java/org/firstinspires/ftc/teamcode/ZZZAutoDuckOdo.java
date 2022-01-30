@@ -31,7 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 //@Disabled
-public abstract class AutoDuckOdo extends AutoParentOdo {
+public abstract class ZZZAutoDuckOdo extends ZZZAutoParentOdo {
     protected abstract void goToCarousel();
     protected abstract void spinCarousel();
     protected void doAdditionalMissions(int targetZone) {
