@@ -290,7 +290,7 @@ class  FFPipeline extends OpenCvPipeline {
          * Now that we found the max, we actually need to go and
          * figure out which sample region that value was from
          */
-        if (max == avg1) // Was it from region 1?
+        if (max == avg3) // Was it from region 1?
         {
             position = FreightLocation.ONE; // Record our analysis
 
@@ -318,11 +318,11 @@ class  FFPipeline extends OpenCvPipeline {
                     region2_pointB, // Second point which defines the rectangle
                     YELLOW, // The color the rectangle is drawn in
                     -1); // Negative thickness means solid fill
-        } else if (max == avg3) // Was it from region 3?
+        } else if (max == avg1) // Was it from region 3?
         {
-            position = FreightLocation.THREE;// Record our analysis
+            position = FreightLocation.ONE;// Record our analysis
 
-            /*
+            /*``
              * Draw a solid rectangle on top of the chosen region.
              * Simply a visual aid. Serves no functional purpose.
              */
