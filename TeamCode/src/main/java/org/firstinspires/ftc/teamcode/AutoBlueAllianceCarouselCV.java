@@ -34,6 +34,8 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -154,7 +156,7 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
             sleep(350);
             robot.setBucketPower(0,0);
             SlideMovementPID(100);
-            robot.horizontalSlide.setPosition(.8);
+            robot.horizontalSlide.setPosition(.75);
             sleep(1000);
             robot.setBucketPower(-.2,.2);
             sleep(800);
@@ -169,7 +171,7 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
             sleep(350);
             robot.setBucketPower(0,0);
             SlideMovementPID(300);
-            robot.horizontalSlide.setPosition(.8);
+            robot.horizontalSlide.setPosition(.75);
             sleep(1000);
             robot.setBucketPower(-.2,.2);
             sleep(1000);
@@ -184,7 +186,7 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
             sleep(350);
             robot.setBucketPower(0,0);
             SlideMovementPID(470);
-            robot.horizontalSlide.setPosition(.8);
+            robot.horizontalSlide.setPosition(.75);
             sleep(1000);
             robot.setBucketPower(-.2,.2);
             sleep(700);
@@ -198,6 +200,8 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
 
     }
     protected void SlideMovementPID (int targetPosition) {
+        robot.slides.rightriser.setDirection(DcMotorEx.Direction.FORWARD);
+        robot.slides.leftriser.setDirection(DcMotorEx.Direction.FORWARD);
         telemetry.addData("SlideMovementPID", "start SlideMovementPID");
         robot.slides.rightriser.setTargetPosition(targetPosition);
         robot.slides.leftriser.setTargetPosition(-targetPosition);
@@ -243,15 +247,15 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
         Pose2d startPose = new Pose2d(-48,-75, Math.toRadians(180));
         odoDriveTrain.setPoseEstimate(startPose);
         Trajectory goToAllianceHubFromStartDuckBlue = odoDriveTrain.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(-27, -50, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-27, -50.5, Math.toRadians(180)))
                 .build();
         odoDriveTrain.followTrajectory(goToAllianceHubFromStartDuckBlue);
     }
 
     protected void goToCarousel() {
-        Pose2d endPoseAllianceHub = new Pose2d(-27,-50, Math.toRadians(180));
+        Pose2d endPoseAllianceHub = new Pose2d(-27,-50.5, Math.toRadians(180));
         Trajectory goToCarouselDuckBlue = odoDriveTrain.trajectoryBuilder(endPoseAllianceHub)
-                .lineToLinearHeading(new Pose2d(-53, -130, Math.toRadians(185)))
+                .lineToLinearHeading(new Pose2d(-50, -130, Math.toRadians(185)))
                 .build();
         odoDriveTrain.followTrajectory(goToCarouselDuckBlue);
     }
@@ -259,13 +263,13 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
     protected void spinCarousel() {
         robot.setBucketPower(0,0);
         robot.duckMech.setPosition(1);
-        sleep(3000);
+        sleep(3500);
         robot.duckMech.setPosition(.5);
     }
 
 
     protected void park() {
-        Trajectory parkDuckBlue = odoDriveTrain.trajectoryBuilder(new Pose2d(-53,-130,Math.toRadians(185)))
+        Trajectory parkDuckBlue = odoDriveTrain.trajectoryBuilder(new Pose2d(-50,-130,Math.toRadians(185)))
                 .lineToLinearHeading(new Pose2d(-65, -100, Math.toRadians(75)))
                 .build();
         Trajectory parkDuckBlue2 = odoDriveTrain.trajectoryBuilder(new Pose2d(-65,-30,Math.toRadians(100)))
