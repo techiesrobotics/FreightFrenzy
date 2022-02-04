@@ -44,10 +44,10 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
-import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 /**
@@ -60,9 +60,9 @@ import org.openftc.easyopencv.OpenCvWebcam;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "BlueAllianceCarouselCV", group = "Concept")
+@Autonomous(name = "BlueAllianceWarehouseCV", group = "Concept")
 //@Disabled
-public class AutoBlueAllianceCarouselCV extends LinearOpMode {
+public class AutoBlueAllianceWarehouseCV extends LinearOpMode {
     OpenCvCamera webcam;
     TechiesPipelineBlueWarehouse pipeline;
     protected static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
@@ -237,51 +237,93 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
 
         goToAllianceHubFromStart();
         dropPreloadFreight();
-        goToCarousel();
-        spinCarousel();
-        park();
+        cycleFreight();
+        intake();
+        //fromWarehouseToHub();
+
+        //park();
     }
 
     protected void goToAllianceHubFromStart(){
-        Pose2d startPose = new Pose2d(-48,-75, Math.toRadians(180));
+        Pose2d startPose = new Pose2d(-48,-25, Math.toRadians(180));
         odoDriveTrain.setPoseEstimate(startPose);
-        Trajectory goToAllianceHubFromStartDuckBlue = odoDriveTrain.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(-27, -50.5, Math.toRadians(180)))
+        Trajectory goToAllianceHubFromStartWarehouseBlue = odoDriveTrain.trajectoryBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(-30, -50.5, Math.toRadians(180)))
                 .build();
-        odoDriveTrain.followTrajectory(goToAllianceHubFromStartDuckBlue);
+        odoDriveTrain.followTrajectory(goToAllianceHubFromStartWarehouseBlue);
     }
 
-    protected void goToCarousel() {
-        Pose2d endPoseAllianceHub = new Pose2d(-27,-50.5, Math.toRadians(180));
-        Trajectory goToCarouselDuckBlue = odoDriveTrain.trajectoryBuilder(endPoseAllianceHub)
-                .lineToLinearHeading(new Pose2d(-50, -130, Math.toRadians(185)))
-                .build();
-        odoDriveTrain.followTrajectory(goToCarouselDuckBlue);
+    protected void cycleFreight() {
+        goToWarehouseFromAllianceHub();
+        //dropFreightTopLevel();
     }
+    protected void goToWarehouseFromAllianceHub() {
+        Pose2d endPoseAllianceHub = new Pose2d(-30,-50.5, Math.toRadians(180));
+        Trajectory goToWarehouseFromAllianceHub = odoDriveTrain.trajectoryBuilder(endPoseAllianceHub)
+                .lineToLinearHeading(new Pose2d(-56, -30, Math.toRadians(95)))
+                .build();
+        Trajectory goToWarehouseFromAllianceHub2 = odoDriveTrain.trajectoryBuilder(new Pose2d(-56,-30,Math.toRadians(90)))
+                .forward(70)
+                .build();
+        //TODO: need change so it doens't hit bar
+        odoDriveTrain.followTrajectory(goToWarehouseFromAllianceHub);
+        odoDriveTrain.followTrajectory(goToWarehouseFromAllianceHub2);
 
-    protected void spinCarousel() {
+
+    }
+    protected void dropFreightTopLevel() {
+        robot.setBucketPower(-.2,.2);
+        sleep(350);
         robot.setBucketPower(0,0);
-        robot.duckMech.setPosition(1);
-        sleep(3500);
-        robot.duckMech.setPosition(.5);
+        SlideMovementPID(470);
+        robot.horizontalSlide.setPosition(.75);
+        sleep(1000);
+        robot.setBucketPower(-.2,.2);
+        sleep(700);
+        robot.setBucketPower(.1,-.1);
+        sleep(175);
+        robot.horizontalSlide.setPosition(.3);
+        sleep(100);
+        robot.slides.retractSlides();
     }
+
 
 
     protected void park() {
-        Trajectory parkDuckBlue = odoDriveTrain.trajectoryBuilder(new Pose2d(-50,-130,Math.toRadians(185)))
-                .lineToLinearHeading(new Pose2d(-65, -100, Math.toRadians(75)))
+        Trajectory parkWarehouseBlue = odoDriveTrain.trajectoryBuilder(new Pose2d(-50,-30,Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-65, -10, Math.toRadians(95)))
                 .build();
-        Trajectory parkDuckBlue2 = odoDriveTrain.trajectoryBuilder(new Pose2d(-65,-30,Math.toRadians(100)))
-                .forward(107)
+        Trajectory parkWarehouseBlue2 = odoDriveTrain.trajectoryBuilder(new Pose2d(-65,-10,Math.toRadians(95)))
+                .forward(50)
                 .build();
-        odoDriveTrain.followTrajectory(parkDuckBlue);
-        odoDriveTrain.followTrajectory(parkDuckBlue2);
+        odoDriveTrain.followTrajectory(parkWarehouseBlue);
+        odoDriveTrain.followTrajectory(parkWarehouseBlue2);
     }
 
 
+    protected void intake() {
+        robot.setBucketPower(0,0);
+        robot.intake.setPower(-1);
+        sleep(2000);
+        robot.intake.setPower(1);
+        sleep(500);
+        robot.intake.setPower(0);
+    }
+
+
+    protected void fromWarehouseToHub() {
+        Trajectory fromWarehouseToHub1 = odoDriveTrain.trajectoryBuilder(new Pose2d(-65,35,Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-55, -20, Math.toRadians(85)))
+                .build();
+        Trajectory fromWarehouseToHub2 = odoDriveTrain.trajectoryBuilder(new Pose2d(-65,-10,Math.toRadians(95)))
+                .forward(50)
+                .build();
+        odoDriveTrain.followTrajectory(fromWarehouseToHub1);
+        odoDriveTrain.followTrajectory(fromWarehouseToHub2);
+    }
 }
 
-class TechiesPipeline extends OpenCvPipeline {
+class TechiesPipelineBlueWarehouse extends OpenCvPipeline {
     /*
      * An enum to define the position
      */
@@ -353,7 +395,7 @@ class TechiesPipeline extends OpenCvPipeline {
     int avg1, avg2, avg3;
 
     // Volatile since accessed by OpMode thread w/o synchronization
-    private volatile TechiesPipeline.FreightLocation position = TechiesPipeline.FreightLocation.ONE;
+    private volatile FreightLocation position = FreightLocation.ONE;
 
     /*
      * This function takes the RGB frame, converts to YCrCb,
@@ -498,7 +540,7 @@ class TechiesPipeline extends OpenCvPipeline {
          */
         if (max == avg3) // Was it from region 1?
         {
-            position = TechiesPipeline.FreightLocation.THREE; // Record our analysis
+            position = FreightLocation.THREE; // Record our analysis
 
             /*
              * Draw a solid rectangle on top of the chosen region.
@@ -512,7 +554,7 @@ class TechiesPipeline extends OpenCvPipeline {
                     -1); // Negative thickness means solid fill
         } else if (max == avg2) // Was it from region 2?
         {
-            position = TechiesPipeline.FreightLocation.TWO; // Record our analysis
+            position = FreightLocation.TWO; // Record our analysis
 
             /*
              * Draw a solid rectangle on top of the chosen region.
@@ -526,7 +568,7 @@ class TechiesPipeline extends OpenCvPipeline {
                     -1); // Negative thickness means solid fill
         } else if (max == avg1) // Was it from region 3?
         {
-            position = TechiesPipeline.FreightLocation.ONE;// Record our analysis
+            position = FreightLocation.ONE;// Record our analysis
 
             /*
              * Draw a solid rectangle on top of the chosen region.
