@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.test.SlideMovementPIDController;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -59,11 +60,11 @@ import org.openftc.easyopencv.OpenCvWebcam;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "BlueAllianceCarouselCV", group = "Concept")
+@Autonomous(name = "RedAllianceCarouselCV", group = "Concept")
 //@Disabled
 public class AutoRedAllianceCarouselCV extends LinearOpMode {
-    //OpenCvCamera webcam;
-    //TechiesRedCarouselPipeline pipeline;
+    OpenCvCamera webcam;
+    TechiesRedCarouselPipeline pipeline;
     protected static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
     protected static final String[] LABELS = {
       "Ball",
@@ -81,7 +82,7 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
     double maxVelocity = 0.0;
     double currentPos;
     double repetitions = 0;
-    //SlideMovementPIDController pidController;
+    SlideMovementPIDController pidController;
 
 
     @Override
@@ -98,18 +99,18 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
 
         waitForStart();
 
-        doMissions(targetLevel);
+        doRedCarouselMissions(targetLevel);
     }
 
-   /*
-    private void setupCamera() {
-        //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        //pipeline = new TechiesRedCarouselPipeline();
-        //webcam.setPipeline(pipeline);
 
-        //webcam.openCameraDeviceAsync(new OpenCvWebcam.AsyncCameraOpenListener()
-        //{
+    private void setupCamera() {
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        pipeline = new TechiesRedCarouselPipeline();
+        webcam.setPipeline(pipeline);
+
+        webcam.openCameraDeviceAsync(new OpenCvWebcam.AsyncCameraOpenListener()
+        {
             @Override
             public void onOpened()
             {
@@ -120,15 +121,15 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
             public void onError(int errorCode)
             {
 
-                 * This will be called if the camera could not be opened
+                 // This will be called if the camera could not be opened
 
             }
         });
     }
 
-*/
 
-    /* private int determineTargetLevel() {
+
+     private int determineTargetLevel() {
         while (!opModeIsActive())
         {
             telemetry.addData("Freight Location: ", pipeline.getAnalysis());
@@ -147,7 +148,7 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
         }
         return targetLevel;
     }
-*/
+
     protected void dropPreloadFreight()   {
         telemetry.addData("dropPreloadFreight", "dropPreloadFreight");
         telemetry.update();
@@ -233,41 +234,49 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
     }
 
 
-    protected void doMissions(int targetZone) {
+    protected void doRedCarouselMissions(int targetZone) {
 
-        goToAllianceHubFromStart();
+        goToRedAllianceHubFromStart();
         dropPreloadFreight();
-        goToCarousel();
-        spinCarousel();
-        park();
+        goToRedCarousel();
+        spinRedCarousel();
+        // parkInRedWarehouse();
+        parkInRedStorage();
     }
 
-    protected void goToAllianceHubFromStart(){
-        Pose2d startPose = new Pose2d(48,-75, Math.toRadians(180));
+    protected void goToRedAllianceHubFromStart(){
+        Pose2d startPose = new Pose2d(48,-75, Math.toRadians(0));
         odoDriveTrain.setPoseEstimate(startPose);
         Trajectory goToAllianceHubFromStartDuckBlue = odoDriveTrain.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(27, -50, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(27, -50, Math.toRadians(0)))
                 .build();
         odoDriveTrain.followTrajectory(goToAllianceHubFromStartDuckBlue);
     }
 
-    protected void goToCarousel() {
-        Pose2d endPoseAllianceHub = new Pose2d(27,-50, Math.toRadians(180));
+    protected void goToRedCarousel() {
+        Pose2d endPoseAllianceHub = new Pose2d(27,-50, Math.toRadians(0));
         Trajectory goToCarouselDuckBlue = odoDriveTrain.trajectoryBuilder(endPoseAllianceHub)
-                .lineToLinearHeading(new Pose2d(53, -130, Math.toRadians(185)))
+                .lineToLinearHeading(new Pose2d(53, -130, Math.toRadians(355)))
                 .build();
         odoDriveTrain.followTrajectory(goToCarouselDuckBlue);
     }
 
-    protected void spinCarousel() {
+    protected void spinRedCarousel() {
+        // Change the direction of the servo - AJ 2/5
         robot.setBucketPower(0,0);
-        robot.duckMech.setPosition(1);
+        robot.duckMech.setPosition(0);
         sleep(3000);
         robot.duckMech.setPosition(.5);
     }
+    protected void parkInRedStorage(){
+        Trajectory parkRedStorage = odoDriveTrain.trajectoryBuilder(new Pose2d(53,-130,Math.toRadians(355)))
+                .lineToLinearHeading(new Pose2d(23, -130, Math.toRadians(90)))
+                .build();
+        odoDriveTrain.followTrajectory(parkRedStorage);
+    }
 
 
-    protected void park() {
+    protected void parkInRedWarehouse() {
         Trajectory parkDuckBlue = odoDriveTrain.trajectoryBuilder(new Pose2d(53,-130,Math.toRadians(185)))
                 .lineToLinearHeading(new Pose2d(-65, -100, Math.toRadians(75)))
                 .build();
