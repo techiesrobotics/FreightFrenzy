@@ -43,10 +43,10 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
-import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 /**
@@ -61,9 +61,9 @@ import org.openftc.easyopencv.OpenCvWebcam;
  */
 @Autonomous(name = "BlueAllianceCarouselCV", group = "Concept")
 //@Disabled
-public class AutoBlueAllianceCarouselCV extends LinearOpMode {
-    OpenCvCamera webcam;
-    TechiesBlueCarouselPipeline pipeline;
+public class AutoRedAllianceCarouselCV extends LinearOpMode {
+    //OpenCvCamera webcam;
+    //TechiesRedCarouselPipeline pipeline;
     protected static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
     protected static final String[] LABELS = {
       "Ball",
@@ -89,9 +89,9 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
         robot = new TechiesHardwareWithoutDriveTrain(hardwareMap);
         odoDriveTrain = new SampleMecanumDrive(hardwareMap);
 
-        setupCamera();
+        // setupCamera();
 
-        targetLevel = determineTargetLevel();
+        targetLevel = Constants.TARGET_LEVEL_DEFAULT; // determineTargetLevel();
         telemetry.addData("Target Level", targetLevel);
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
@@ -101,14 +101,15 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
         doMissions(targetLevel);
     }
 
+   /*
     private void setupCamera() {
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        pipeline = new TechiesBlueCarouselPipeline();
-        webcam.setPipeline(pipeline);
+        //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        //pipeline = new TechiesRedCarouselPipeline();
+        //webcam.setPipeline(pipeline);
 
-        webcam.openCameraDeviceAsync(new OpenCvWebcam.AsyncCameraOpenListener()
-        {
+        //webcam.openCameraDeviceAsync(new OpenCvWebcam.AsyncCameraOpenListener()
+        //{
             @Override
             public void onOpened()
             {
@@ -118,14 +119,16 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
             @Override
             public void onError(int errorCode)
             {
-                /*
+
                  * This will be called if the camera could not be opened
-                 */
+
             }
         });
     }
 
-    private int determineTargetLevel() {
+*/
+
+    /* private int determineTargetLevel() {
         while (!opModeIsActive())
         {
             telemetry.addData("Freight Location: ", pipeline.getAnalysis());
@@ -133,18 +136,18 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
             // Don't burn CPU cycles busy-looping in this sample
             sleep(40);
         }
-        if (TechiesBlueCarouselPipeline.FreightLocation.ONE.equals(pipeline.getAnalysis())){
+        if (TechiesRedCarouselPipeline.FreightLocation.ONE.equals(pipeline.getAnalysis())){
             targetLevel =Constants.TARGET_LEVEL_BOTTOM;
         }
-        else if (TechiesBlueCarouselPipeline.FreightLocation.TWO.equals(pipeline.getAnalysis())){
+        else if (TechiesRedCarouselPipeline.FreightLocation.TWO.equals(pipeline.getAnalysis())){
             targetLevel =Constants.TARGET_LEVEL_MIDDLE;
         }
-        else if (TechiesBlueCarouselPipeline.FreightLocation.THREE.equals(pipeline.getAnalysis())){
+        else if (TechiesRedCarouselPipeline.FreightLocation.THREE.equals(pipeline.getAnalysis())){
             targetLevel =Constants.TARGET_LEVEL_TOP;
         }
         return targetLevel;
     }
-
+*/
     protected void dropPreloadFreight()   {
         telemetry.addData("dropPreloadFreight", "dropPreloadFreight");
         telemetry.update();
@@ -240,18 +243,18 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
     }
 
     protected void goToAllianceHubFromStart(){
-        Pose2d startPose = new Pose2d(-48,-75, Math.toRadians(180));
+        Pose2d startPose = new Pose2d(48,-75, Math.toRadians(180));
         odoDriveTrain.setPoseEstimate(startPose);
         Trajectory goToAllianceHubFromStartDuckBlue = odoDriveTrain.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(-27, -50, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(27, -50, Math.toRadians(180)))
                 .build();
         odoDriveTrain.followTrajectory(goToAllianceHubFromStartDuckBlue);
     }
 
     protected void goToCarousel() {
-        Pose2d endPoseAllianceHub = new Pose2d(-27,-50, Math.toRadians(180));
+        Pose2d endPoseAllianceHub = new Pose2d(27,-50, Math.toRadians(180));
         Trajectory goToCarouselDuckBlue = odoDriveTrain.trajectoryBuilder(endPoseAllianceHub)
-                .lineToLinearHeading(new Pose2d(-53, -130, Math.toRadians(185)))
+                .lineToLinearHeading(new Pose2d(53, -130, Math.toRadians(185)))
                 .build();
         odoDriveTrain.followTrajectory(goToCarouselDuckBlue);
     }
@@ -265,10 +268,10 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
 
 
     protected void park() {
-        Trajectory parkDuckBlue = odoDriveTrain.trajectoryBuilder(new Pose2d(-53,-130,Math.toRadians(185)))
+        Trajectory parkDuckBlue = odoDriveTrain.trajectoryBuilder(new Pose2d(53,-130,Math.toRadians(185)))
                 .lineToLinearHeading(new Pose2d(-65, -100, Math.toRadians(75)))
                 .build();
-        Trajectory parkDuckBlue2 = odoDriveTrain.trajectoryBuilder(new Pose2d(-65,-30,Math.toRadians(100)))
+        Trajectory parkDuckBlue2 = odoDriveTrain.trajectoryBuilder(new Pose2d(65,-30,Math.toRadians(100)))
                 .forward(107)
                 .build();
         odoDriveTrain.followTrajectory(parkDuckBlue);
@@ -278,7 +281,7 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
 
 }
 
-class TechiesBlueCarouselPipeline extends OpenCvPipeline {
+class TechiesRedCarouselPipeline extends OpenCvPipeline {
     /*
      * An enum to define the position
      */
@@ -350,7 +353,7 @@ class TechiesBlueCarouselPipeline extends OpenCvPipeline {
     int avg1, avg2, avg3;
 
     // Volatile since accessed by OpMode thread w/o synchronization
-    private volatile TechiesBlueCarouselPipeline.FreightLocation position = TechiesBlueCarouselPipeline.FreightLocation.ONE;
+    private volatile FreightLocation position = FreightLocation.ONE;
 
     /*
      * This function takes the RGB frame, converts to YCrCb,
@@ -495,7 +498,7 @@ class TechiesBlueCarouselPipeline extends OpenCvPipeline {
          */
         if (max == avg3) // Was it from region 1?
         {
-            position = TechiesBlueCarouselPipeline.FreightLocation.THREE; // Record our analysis
+            position = FreightLocation.THREE; // Record our analysis
 
             /*
              * Draw a solid rectangle on top of the chosen region.
@@ -509,7 +512,7 @@ class TechiesBlueCarouselPipeline extends OpenCvPipeline {
                     -1); // Negative thickness means solid fill
         } else if (max == avg2) // Was it from region 2?
         {
-            position = TechiesBlueCarouselPipeline.FreightLocation.TWO; // Record our analysis
+            position = FreightLocation.TWO; // Record our analysis
 
             /*
              * Draw a solid rectangle on top of the chosen region.
@@ -523,7 +526,7 @@ class TechiesBlueCarouselPipeline extends OpenCvPipeline {
                     -1); // Negative thickness means solid fill
         } else if (max == avg1) // Was it from region 3?
         {
-            position = TechiesBlueCarouselPipeline.FreightLocation.ONE;// Record our analysis
+            position = FreightLocation.ONE;// Record our analysis
 
             /*
              * Draw a solid rectangle on top of the chosen region.
