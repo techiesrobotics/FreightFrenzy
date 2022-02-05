@@ -57,16 +57,10 @@ public class TechiesHardwareWithoutDriveTrain
     /* Public OpMode members. */
 
     public DcMotor  intake      = null;
-
     public CRServo  leftBucket  = null;
     public CRServo  rightBucket = null;
-
-
     public Servo  duckMech   = null;
-
     public Servo   horizontalSlide   = null;
-
-
     public TechiesSlideHardware slides= null;
 
     /* local OpMode members. */
@@ -89,26 +83,19 @@ public class TechiesHardwareWithoutDriveTrain
 
         leftBucket    = hwMap.get(CRServo.class, "leftBucket");
         rightBucket   = hwMap.get(CRServo.class, "rightBucket");
-
         duckMech   = hwMap.get(Servo.class, "DuckMech");
-
         horizontalSlide = hwMap.get(Servo.class, "horizontalSlide");
 
         intake.setDirection(DcMotor.Direction.FORWARD);
-
-        //duckMech.setDirection(CRServo.Direction.FORWARD);
-
         leftBucket.setDirection(CRServo.Direction.FORWARD);
         rightBucket.setDirection(CRServo.Direction.FORWARD);
 
 
         intake.setPower(0.0);
-
        // duckMech.setPower(0.0);
-
         leftBucket.setPower(0.0);
         rightBucket.setPower(0.0);
-        horizontalSlide.setPosition(0.25);
+        horizontalSlide.setPosition(0.3);
 
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
