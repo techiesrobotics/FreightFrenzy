@@ -73,8 +73,8 @@ public class TechiesSlideHardware
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        leftriser    = hwMap.get(DcMotorEx.class, "leftriser");
-        rightriser    = hwMap.get(DcMotorEx.class, "rightriser");
+        leftriser = hwMap.get(DcMotorEx.class, "leftriser");
+        rightriser = hwMap.get(DcMotorEx.class, "rightriser");
 
         setUpMotor(leftriser);
         setUpMotor(rightriser);

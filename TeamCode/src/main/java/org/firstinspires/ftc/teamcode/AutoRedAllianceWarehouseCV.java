@@ -38,7 +38,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.test.SlideMovementPIDController;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -61,17 +60,17 @@ import org.openftc.easyopencv.OpenCvWebcam;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "RedAllianceCarouselCV", group = "Concept")
+@Autonomous(name = "RedAllianceWarehouseCV", group = "Concept")
 //@Disabled
-public class AutoRedAllianceCarouselCV extends LinearOpMode {
+public class AutoRedAllianceWarehouseCV extends LinearOpMode {
     OpenCvCamera webcam;
-    TechiesRedCarouselPipeline pipeline;
+    TechiesPipelineRedWarehouse pipeline;
     protected static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
     protected static final String[] LABELS = {
-      "Ball",
-      "Cube",
-      "Duck",
-      "Marker"
+            "Ball",
+            "Cube",
+            "Duck",
+            "Marker"
     };
 
     int targetLevel = Constants.TARGET_LEVEL_DEFAULT;
@@ -83,7 +82,7 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
     double maxVelocity = 0.0;
     double currentPos;
     double repetitions = 0;
-    SlideMovementPIDController pidController;
+    //SlideMovementPIDController pidController;
 
 
     @Override
@@ -100,14 +99,13 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
 
         waitForStart();
 
-        doRedCarouselMissions(targetLevel);
+        doMissions(targetLevel);
     }
-
 
     private void setupCamera() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        pipeline = new TechiesRedCarouselPipeline();
+        pipeline = new TechiesPipelineRedWarehouse();
         webcam.setPipeline(pipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvWebcam.AsyncCameraOpenListener()
@@ -121,16 +119,14 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
             @Override
             public void onError(int errorCode)
             {
-
-                 // This will be called if the camera could not be opened
-
+                /*
+                 * This will be called if the camera could not be opened
+                 */
             }
         });
     }
 
-
-
-     private int determineTargetLevel() {
+    private int determineTargetLevel() {
         while (!opModeIsActive())
         {
             telemetry.addData("Freight Location: ", pipeline.getAnalysis());
@@ -138,13 +134,13 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
             // Don't burn CPU cycles busy-looping in this sample
             sleep(40);
         }
-        if (TechiesRedCarouselPipeline.FreightLocation.ONE.equals(pipeline.getAnalysis())){
+        if (TechiesPipelineRedWarehouse.FreightLocation.ONE.equals(pipeline.getAnalysis())){
             targetLevel =Constants.TARGET_LEVEL_BOTTOM;
         }
-        else if (TechiesRedCarouselPipeline.FreightLocation.TWO.equals(pipeline.getAnalysis())){
+        else if (TechiesPipelineRedWarehouse.FreightLocation.TWO.equals(pipeline.getAnalysis())){
             targetLevel =Constants.TARGET_LEVEL_MIDDLE;
         }
-        else if (TechiesRedCarouselPipeline.FreightLocation.THREE.equals(pipeline.getAnalysis())){
+        else if (TechiesPipelineRedWarehouse.FreightLocation.THREE.equals(pipeline.getAnalysis())){
             targetLevel =Constants.TARGET_LEVEL_TOP;
         }
         return targetLevel;
@@ -159,13 +155,13 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
             sleep(350);
             robot.setBucketPower(0,0);
             SlideMovementPID(100);
-            robot.horizontalSlide.setPosition(.8);
+            robot.horizontalSlide.setPosition(.75);
             sleep(1000);
             robot.setBucketPower(-.2,.2);
             sleep(800);
-            robot.setBucketPower(.2,-.2);
+            robot.setBucketPower(.25,-.25);
             sleep(600);
-            robot.horizontalSlide.setPosition(.3);
+            robot.horizontalSlide.setPosition(.32);
             robot.slides.retractSlides();
 
 
@@ -173,31 +169,33 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
             robot.setBucketPower(-.2,.2);
             sleep(350);
             robot.setBucketPower(0,0);
-            SlideMovementPID(300);
-            robot.horizontalSlide.setPosition(.8);
+            SlideMovementPID(275);
+            robot.horizontalSlide.setPosition(.75);
             sleep(1000);
-            robot.setBucketPower(-.2,.2);
+            robot.setBucketPower(-.25,.25);
             sleep(1000);
-            robot.setBucketPower(.2,-.2);
+            robot.setBucketPower(.25,-.25);
             sleep(150);
-            robot.horizontalSlide.setPosition(.3);
+            robot.horizontalSlide.setPosition(.32);
             sleep(100);
             robot.slides.retractSlides();
+
 
         } else {
             robot.setBucketPower(-.2,.2);
             sleep(350);
             robot.setBucketPower(0,0);
             SlideMovementPID(470);
-            robot.horizontalSlide.setPosition(.8);
+            robot.horizontalSlide.setPosition(.75);
             sleep(1000);
             robot.setBucketPower(-.2,.2);
             sleep(700);
-            robot.setBucketPower(.25,-.25);
-            sleep(175);
-            robot.horizontalSlide.setPosition(.3);
+            robot.setBucketPower(.2,-.2);
+            sleep(150);
+            robot.horizontalSlide.setPosition(.32);
             sleep(100);
             robot.slides.retractSlides();
+
         }
 
 
@@ -237,64 +235,124 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
     }
 
 
-    protected void doRedCarouselMissions(int targetZone) {
+    protected void doMissions(int targetZone) {
 
-        goToRedAllianceHubFromStart();
+        goToAllianceHubFromStart();
         dropPreloadFreight();
-        goToRedCarousel();
-        spinRedCarousel();
-        parkInRedWarehouse();
-        //parkInRedStorage();
+        cycleFreight();
+       // park();
+        //intake();
+        //fromWarehouseToHub();
+        //smallIntake();
+        //dropFreightTopLevel();
+        //parkInWarehouseFromAllianceHub();
     }
 
-    protected void goToRedAllianceHubFromStart(){
-        Pose2d startPose = new Pose2d(48,-75, Math.toRadians(0));
+    protected void goToAllianceHubFromStart(){
+        Pose2d startPose = new Pose2d(48,-25, Math.toRadians(0));
         odoDriveTrain.setPoseEstimate(startPose);
-        Trajectory goToAllianceHubFromStartDuckBlue = odoDriveTrain.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(26, -50, Math.toRadians(0)))
+        Trajectory goToAllianceHubFromStartWarehouseBlue = odoDriveTrain.trajectoryBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(29, -49, Math.toRadians(0)))
                 .build();
-        odoDriveTrain.followTrajectory(goToAllianceHubFromStartDuckBlue);
+        odoDriveTrain.followTrajectory(goToAllianceHubFromStartWarehouseBlue);
     }
 
-    protected void goToRedCarousel() {
-        Pose2d endPoseAllianceHub = new Pose2d(26,-50, Math.toRadians(0));
-        Trajectory goToCarouselDuckBlue = odoDriveTrain.trajectoryBuilder(endPoseAllianceHub)
-                .lineToLinearHeading(new Pose2d(52, -130, Math.toRadians(355)))
+    protected void cycleFreight() {
+        goToWarehouseFromAllianceHub();
+        intake();
+        fromWarehouseToHub();
+        dropFreightTopLevel();
+        goToWarehouseFromAllianceHub();
+
+        //parkInWarehouseFromAllianceHub();
+        park();
+    }
+    protected void goToWarehouseFromAllianceHub() {
+        Pose2d endPoseAllianceHub = new Pose2d(29,-49, Math.toRadians(0));
+        Trajectory goToWarehouseFromAllianceHub = odoDriveTrain.trajectoryBuilder(endPoseAllianceHub)
+                .lineToLinearHeading(new Pose2d(56, -30, Math.toRadians(85)))
                 .build();
-        odoDriveTrain.followTrajectory(goToCarouselDuckBlue);
+        Trajectory goToWarehouseFromAllianceHub2 = odoDriveTrain.trajectoryBuilder(new Pose2d(-56,30,Math.toRadians(85)))
+                .forward(49)
+                .build();
+        //TODO: need change so it doens't hit bar
+        odoDriveTrain.followTrajectory(goToWarehouseFromAllianceHub);
+        odoDriveTrain.followTrajectory(goToWarehouseFromAllianceHub2);
+
+
     }
 
-    protected void spinRedCarousel() {
-        // Change the direction of the servo - AJ 2/5
+    protected void park() {
+        Pose2d endPoseAllianceHub = new Pose2d(10,30, Math.toRadians(85));
+        Trajectory parkInWarehouseFromAllianceHub = odoDriveTrain.trajectoryBuilder(endPoseAllianceHub)
+                .strafeLeft(22)
+                .build();
+        Trajectory parkInWarehouseFromAllianceHub2 = odoDriveTrain.trajectoryBuilder(parkInWarehouseFromAllianceHub.end())
+                .lineToLinearHeading(new Pose2d(-10, 55, Math.toRadians(0)))
+                .build();
+        odoDriveTrain.followTrajectory(parkInWarehouseFromAllianceHub);
+        odoDriveTrain.followTrajectory(parkInWarehouseFromAllianceHub2);
+    }
+    protected void dropFreightTopLevel() {
+        robot.setBucketPower(-.2,.2);
+        sleep(350);
         robot.setBucketPower(0,0);
-        robot.duckMech.setPosition(0);
-        sleep(3000);
-        robot.duckMech.setPosition(.5);
-    }
-    protected void parkInRedStorage(){
-        Trajectory parkRedStorage = odoDriveTrain.trajectoryBuilder(new Pose2d(52,-130,Math.toRadians(355)))
-                .lineToLinearHeading(new Pose2d(23, -130, Math.toRadians(90)))
-                .build();
-        odoDriveTrain.followTrajectory(parkRedStorage);
-    }
-
-
-    protected void parkInRedWarehouse() {
-       // sleep(10000);
-        Trajectory parkDuckBlue = odoDriveTrain.trajectoryBuilder(new Pose2d(53,-130,Math.toRadians(355)))
-                .lineToLinearHeading(new Pose2d(65, -100, Math.toRadians(80)))
-                .build();
-        Trajectory parkDuckBlue2 = odoDriveTrain.trajectoryBuilder(new Pose2d(65,-30,Math.toRadians(80)))
-                .forward(107)
-                .build();
-        odoDriveTrain.followTrajectory(parkDuckBlue);
-        odoDriveTrain.followTrajectory(parkDuckBlue2);
+        SlideMovementPID(470);
+        robot.horizontalSlide.setPosition(.75);
+        sleep(1000);
+        robot.setBucketPower(-.2,.2);
+        sleep(700);
+        robot.setBucketPower(.2,-.2);
+        sleep(150);
+        robot.horizontalSlide.setPosition(.32);
+        sleep(100);
+        robot.slides.retractSlides();
     }
 
 
+    protected void smallIntake() {
+        robot.setBucketPower(0,0);
+        robot.intake.setPower(-1);
+        sleep(500);
+        robot.intake.setPower(0);
+    }
+
+    protected void intake() {
+        robot.setBucketPower(0,0);
+        robot.intake.setPower(-.5);
+        sleep(2500);
+        robot.intake.setPower(.5);
+        sleep(500);
+        robot.intake.setPower(0);
+    }
+
+
+    protected void fromWarehouseToHub() {
+        Trajectory fromWarehouseToHub1 = odoDriveTrain.trajectoryBuilder(new Pose2d(65,35,Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(55, -15, Math.toRadians(78)))
+                .build();
+        Trajectory fromWarehouseToHub2 = odoDriveTrain.trajectoryBuilder(new Pose2d(55,-15,Math.toRadians(78)))
+                .lineToLinearHeading(new Pose2d(31, -16, Math.toRadians(0)))
+                .build();
+        odoDriveTrain.followTrajectory(fromWarehouseToHub1);
+        odoDriveTrain.followTrajectory(fromWarehouseToHub2);
+    }
+
+    protected void parkInWarehouseFromAllianceHub() {
+        Pose2d endPoseAllianceHub = new Pose2d(30,-15, Math.toRadians(0));
+        Trajectory parkInWarehouseFromAllianceHub1 = odoDriveTrain.trajectoryBuilder(endPoseAllianceHub)
+                .lineToLinearHeading(new Pose2d(56, -30, Math.toRadians(95)))
+                .build();
+        Trajectory parkInWarehouseFromAllianceHub2 = odoDriveTrain.trajectoryBuilder(new Pose2d(56,-30,Math.toRadians(95)))
+                .lineToLinearHeading(new Pose2d(60, 20, Math.toRadians(95)))
+                .build();
+        //TODO: need change so it doesn't hit bar
+        odoDriveTrain.followTrajectory(parkInWarehouseFromAllianceHub1);
+        odoDriveTrain.followTrajectory(parkInWarehouseFromAllianceHub2);
+    }
 }
 
-class TechiesRedCarouselPipeline extends OpenCvPipeline {
+class TechiesPipelineRedWarehouse extends OpenCvPipeline {
     /*
      * An enum to define the position
      */
@@ -573,4 +631,4 @@ class TechiesRedCarouselPipeline extends OpenCvPipeline {
         return maximum;
     }
 
-    }
+}

@@ -239,7 +239,7 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
         dropPreloadFreight();
         goToCarousel();
         spinCarousel();
-        park();
+        parkInBlueStorage();
     }
 
     protected void goToAllianceHubFromStart(){
@@ -266,6 +266,12 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
         robot.duckMech.setPosition(.5);
     }
 
+    protected void parkInBlueStorage(){
+        Trajectory parkBlueStorage = odoDriveTrain.trajectoryBuilder(new Pose2d(-52,-130,Math.toRadians(185)))
+                .lineToLinearHeading(new Pose2d(-23, -130, Math.toRadians(90)))
+                .build();
+        odoDriveTrain.followTrajectory(parkBlueStorage);
+    }
 
     protected void park() {
         Trajectory parkDuckBlue = odoDriveTrain.trajectoryBuilder(new Pose2d(-50,-130,Math.toRadians(185)))

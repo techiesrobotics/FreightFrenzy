@@ -95,7 +95,7 @@ public class TechiesHardwareWithoutDriveTrain
        // duckMech.setPower(0.0);
         leftBucket.setPower(0.0);
         rightBucket.setPower(0.0);
-        horizontalSlide.setPosition(0.3);
+        horizontalSlide.setPosition(0.32);
 
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
