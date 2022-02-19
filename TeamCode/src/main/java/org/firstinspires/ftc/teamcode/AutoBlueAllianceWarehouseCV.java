@@ -151,16 +151,16 @@ public class AutoBlueAllianceWarehouseCV extends LinearOpMode {
         telemetry.update();
 
         if (Constants.TARGET_LEVEL_BOTTOM == targetLevel) {
-            robot.setBucketPower(-.2,.2);
-            sleep(350);
+            robot.setBucketPower(-.3,.3);
+            sleep(400);
             robot.setBucketPower(0,0);
             SlideMovementPID(100);
-            robot.horizontalSlide.setPosition(.75);
+            robot.horizontalSlide.setPosition(.65);
             sleep(1000);
             robot.setBucketPower(-.2,.2);
             sleep(800);
-            robot.setBucketPower(.2,-.2);
-            sleep(600);
+            robot.setBucketPower(.25,-.25);
+            sleep(800);
             robot.horizontalSlide.setPosition(.3);
             robot.slides.retractSlides();
 
@@ -169,7 +169,7 @@ public class AutoBlueAllianceWarehouseCV extends LinearOpMode {
             robot.setBucketPower(-.2,.2);
             sleep(350);
             robot.setBucketPower(0,0);
-            SlideMovementPID(300);
+            SlideMovementPID(275);
             robot.horizontalSlide.setPosition(.75);
             sleep(1000);
             robot.setBucketPower(-.2,.2);
@@ -237,33 +237,42 @@ public class AutoBlueAllianceWarehouseCV extends LinearOpMode {
 
         goToAllianceHubFromStart();
         dropPreloadFreight();
-        cycleFreight();
+        goToWarehouseFromAllianceHub();
         intake();
-        //fromWarehouseToHub();
-
-        //park();
+        fromWarehouseToHub();
+        dropFreightTopLevel();
+        park();
+        swivel();
     }
 
     protected void goToAllianceHubFromStart(){
+        /* this is for going straight
         Pose2d startPose = new Pose2d(-48,-25, Math.toRadians(180));
         odoDriveTrain.setPoseEstimate(startPose);
         Trajectory goToAllianceHubFromStartWarehouseBlue = odoDriveTrain.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(-30, -50.5, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-24, -50.5, Math.toRadians(180)))
+                .build();
+        odoDriveTrain.followTrajectory(goToAllianceHubFromStartWarehouseBlue);*/
+        // this is for going diagonally
+        Pose2d startPose = new Pose2d(-48,-25, Math.toRadians(180));
+        odoDriveTrain.setPoseEstimate(startPose);
+        Trajectory goToAllianceHubFromStartWarehouseBlue = odoDriveTrain.trajectoryBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(-23, -39, Math.toRadians(135)))
                 .build();
         odoDriveTrain.followTrajectory(goToAllianceHubFromStartWarehouseBlue);
     }
 
-    protected void cycleFreight() {
-        goToWarehouseFromAllianceHub();
-        //dropFreightTopLevel();
-    }
+
     protected void goToWarehouseFromAllianceHub() {
-        Pose2d endPoseAllianceHub = new Pose2d(-30,-50.5, Math.toRadians(180));
+        //for straight
+        //Pose2d endPoseAllianceHub = new Pose2d(-24,-50.5, Math.toRadians(180));
+        Pose2d endPoseAllianceHub = new Pose2d(-23,-39, Math.toRadians(135));
         Trajectory goToWarehouseFromAllianceHub = odoDriveTrain.trajectoryBuilder(endPoseAllianceHub)
-                .lineToLinearHeading(new Pose2d(-56, -30, Math.toRadians(95)))
+                //.lineToLinearHeading(new Pose2d(-56, -30, Math.toRadians(95)))
+                .lineToLinearHeading(new Pose2d(-60, -30, Math.toRadians(95)))
                 .build();
-        Trajectory goToWarehouseFromAllianceHub2 = odoDriveTrain.trajectoryBuilder(new Pose2d(-56,-30,Math.toRadians(90)))
-                .forward(70)
+        Trajectory goToWarehouseFromAllianceHub2 = odoDriveTrain.trajectoryBuilder(new Pose2d(-56,-30,Math.toRadians(95)))
+                .forward(50)
                 .build();
         //TODO: need change so it doens't hit bar
         odoDriveTrain.followTrajectory(goToWarehouseFromAllianceHub);
@@ -271,18 +280,28 @@ public class AutoBlueAllianceWarehouseCV extends LinearOpMode {
 
 
     }
+    protected void fromWarehouseToHub() {
+        Trajectory fromWarehouseToHub1 = odoDriveTrain.trajectoryBuilder(new Pose2d(-56,30,Math.toRadians(95)))
+                .lineToLinearHeading(new Pose2d(-56, -15, Math.toRadians(85)))
+                .build();
+        Trajectory fromWarehouseToHub2 = odoDriveTrain.trajectoryBuilder(new Pose2d(-56,-15,Math.toRadians(85)))
+                .lineToLinearHeading(new Pose2d(-29, -30, Math.toRadians(180)))
+                .build();
+        odoDriveTrain.followTrajectory(fromWarehouseToHub1);
+        odoDriveTrain.followTrajectory(fromWarehouseToHub2);
+    }
     protected void dropFreightTopLevel() {
-        robot.setBucketPower(-.2,.2);
-        sleep(350);
+        robot.setBucketPower(-.4,.4);
+        sleep(500);
         robot.setBucketPower(0,0);
         SlideMovementPID(470);
         robot.horizontalSlide.setPosition(.75);
         sleep(1000);
-        robot.setBucketPower(-.2,.2);
-        sleep(700);
-        robot.setBucketPower(.1,-.1);
-        sleep(175);
-        robot.horizontalSlide.setPosition(.3);
+        robot.setBucketPower(-.3,.3);
+        sleep(800);
+        robot.setBucketPower(.2,-.2);
+        sleep(200);
+        robot.horizontalSlide.setPosition(.32);
         sleep(100);
         robot.slides.retractSlides();
     }
@@ -290,16 +309,26 @@ public class AutoBlueAllianceWarehouseCV extends LinearOpMode {
 
 
     protected void park() {
-        Trajectory parkWarehouseBlue = odoDriveTrain.trajectoryBuilder(new Pose2d(-50,-30,Math.toRadians(90)))
-                .lineToLinearHeading(new Pose2d(-65, -10, Math.toRadians(95)))
+        Trajectory parkWarehouseBlue = odoDriveTrain.trajectoryBuilder(new Pose2d(-29,-30,Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-65, 0, Math.toRadians(95)))
                 .build();
-        Trajectory parkWarehouseBlue2 = odoDriveTrain.trajectoryBuilder(new Pose2d(-65,-10,Math.toRadians(95)))
-                .forward(50)
+        Trajectory parkWarehouseBlue2 = odoDriveTrain.trajectoryBuilder(new Pose2d(-65,0,Math.toRadians(95)))
+                .forward(41)
                 .build();
         odoDriveTrain.followTrajectory(parkWarehouseBlue);
         odoDriveTrain.followTrajectory(parkWarehouseBlue2);
     }
-
+    protected void swivel() {
+        Pose2d endPoseAllianceHub = new Pose2d(-55,41, Math.toRadians(95));
+        Trajectory parkInWarehouseFromAllianceHub = odoDriveTrain.trajectoryBuilder(endPoseAllianceHub)
+                .strafeRight(22)
+                .build();
+        Trajectory parkInWarehouseFromAllianceHub2 = odoDriveTrain.trajectoryBuilder(parkInWarehouseFromAllianceHub.end())
+                .lineToLinearHeading(new Pose2d(-37, 75, Math.toRadians(180)))
+                .build();
+        odoDriveTrain.followTrajectory(parkInWarehouseFromAllianceHub);
+        odoDriveTrain.followTrajectory(parkInWarehouseFromAllianceHub2);
+    }
 
     protected void intake() {
         robot.setBucketPower(0,0);
@@ -311,16 +340,7 @@ public class AutoBlueAllianceWarehouseCV extends LinearOpMode {
     }
 
 
-    protected void fromWarehouseToHub() {
-        Trajectory fromWarehouseToHub1 = odoDriveTrain.trajectoryBuilder(new Pose2d(-65,35,Math.toRadians(90)))
-                .lineToLinearHeading(new Pose2d(-55, -20, Math.toRadians(85)))
-                .build();
-        Trajectory fromWarehouseToHub2 = odoDriveTrain.trajectoryBuilder(new Pose2d(-65,-10,Math.toRadians(95)))
-                .forward(50)
-                .build();
-        odoDriveTrain.followTrajectory(fromWarehouseToHub1);
-        odoDriveTrain.followTrajectory(fromWarehouseToHub2);
-    }
+
 }
 
 class TechiesPipelineBlueWarehouse extends OpenCvPipeline {

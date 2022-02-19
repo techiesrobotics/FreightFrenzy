@@ -152,10 +152,10 @@ public class AutoRedAllianceWarehouseCV extends LinearOpMode {
 
         if (Constants.TARGET_LEVEL_BOTTOM == targetLevel) {
             robot.setBucketPower(-.2,.2);
-            sleep(350);
+            sleep(400);
             robot.setBucketPower(0,0);
             SlideMovementPID(100);
-            robot.horizontalSlide.setPosition(.75);
+            robot.horizontalSlide.setPosition(.65);
             sleep(1000);
             robot.setBucketPower(-.2,.2);
             sleep(800);
@@ -273,7 +273,7 @@ public class AutoRedAllianceWarehouseCV extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(56, -30, Math.toRadians(85)))
                 .build();
         Trajectory goToWarehouseFromAllianceHub2 = odoDriveTrain.trajectoryBuilder(new Pose2d(-56,30,Math.toRadians(85)))
-                .forward(49)
+                .forward(50)
                 .build();
         //TODO: need change so it doens't hit bar
         odoDriveTrain.followTrajectory(goToWarehouseFromAllianceHub);
@@ -288,20 +288,20 @@ public class AutoRedAllianceWarehouseCV extends LinearOpMode {
                 .strafeLeft(22)
                 .build();
         Trajectory parkInWarehouseFromAllianceHub2 = odoDriveTrain.trajectoryBuilder(parkInWarehouseFromAllianceHub.end())
-                .lineToLinearHeading(new Pose2d(-10, 55, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-8, 55, Math.toRadians(0)))
                 .build();
         odoDriveTrain.followTrajectory(parkInWarehouseFromAllianceHub);
         odoDriveTrain.followTrajectory(parkInWarehouseFromAllianceHub2);
     }
     protected void dropFreightTopLevel() {
-        robot.setBucketPower(-.2,.2);
-        sleep(350);
+        robot.setBucketPower(-.4,.4);
+        sleep(500);
         robot.setBucketPower(0,0);
         SlideMovementPID(470);
         robot.horizontalSlide.setPosition(.75);
         sleep(1000);
         robot.setBucketPower(-.2,.2);
-        sleep(700);
+        sleep(900);
         robot.setBucketPower(.2,-.2);
         sleep(150);
         robot.horizontalSlide.setPosition(.32);
@@ -329,9 +329,9 @@ public class AutoRedAllianceWarehouseCV extends LinearOpMode {
 
     protected void fromWarehouseToHub() {
         Trajectory fromWarehouseToHub1 = odoDriveTrain.trajectoryBuilder(new Pose2d(65,35,Math.toRadians(90)))
-                .lineToLinearHeading(new Pose2d(55, -15, Math.toRadians(78)))
+                .lineToLinearHeading(new Pose2d(55, -15, Math.toRadians(95)))
                 .build();
-        Trajectory fromWarehouseToHub2 = odoDriveTrain.trajectoryBuilder(new Pose2d(55,-15,Math.toRadians(78)))
+        Trajectory fromWarehouseToHub2 = odoDriveTrain.trajectoryBuilder(new Pose2d(55,-15,Math.toRadians(95)))
                 .lineToLinearHeading(new Pose2d(31, -16, Math.toRadians(0)))
                 .build();
         odoDriveTrain.followTrajectory(fromWarehouseToHub1);

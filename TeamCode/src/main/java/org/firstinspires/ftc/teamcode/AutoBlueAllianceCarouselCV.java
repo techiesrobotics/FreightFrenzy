@@ -151,15 +151,15 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
         telemetry.update();
 
         if (Constants.TARGET_LEVEL_BOTTOM == targetLevel) {
-            robot.setBucketPower(-.2,.2);
-            sleep(350);
+            robot.setBucketPower(-.3,.3);
+            sleep(400);
             robot.setBucketPower(0,0);
             SlideMovementPID(100);
-            robot.horizontalSlide.setPosition(.75);
+            robot.horizontalSlide.setPosition(.60);
             sleep(1000);
             robot.setBucketPower(-.2,.2);
             sleep(800);
-            robot.setBucketPower(.2,-.2);
+            robot.setBucketPower(.25,-.25);
             sleep(600);
             robot.horizontalSlide.setPosition(.3);
             robot.slides.retractSlides();
@@ -243,16 +243,24 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
     }
 
     protected void goToAllianceHubFromStart(){
+        /* for straight
         Pose2d startPose = new Pose2d(-48,-75, Math.toRadians(180));
         odoDriveTrain.setPoseEstimate(startPose);
         Trajectory goToAllianceHubFromStartDuckBlue = odoDriveTrain.trajectoryBuilder(startPose)
                 .lineToLinearHeading(new Pose2d(-27, -50.5, Math.toRadians(180)))
                 .build();
         odoDriveTrain.followTrajectory(goToAllianceHubFromStartDuckBlue);
+        */
+        Pose2d startPose = new Pose2d(-48,-75, Math.toRadians(180));
+        odoDriveTrain.setPoseEstimate(startPose);
+        Trajectory goToAllianceHubFromStartDuckBlue = odoDriveTrain.trajectoryBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(-24, -61, Math.toRadians(225)))
+                .build();
+        odoDriveTrain.followTrajectory(goToAllianceHubFromStartDuckBlue);
     }
 
     protected void goToCarousel() {
-        Pose2d endPoseAllianceHub = new Pose2d(-27,-50.5, Math.toRadians(180));
+        Pose2d endPoseAllianceHub = new Pose2d(-24,-61, Math.toRadians(225));
         Trajectory goToCarouselDuckBlue = odoDriveTrain.trajectoryBuilder(endPoseAllianceHub)
                 .lineToLinearHeading(new Pose2d(-50, -130, Math.toRadians(185)))
                 .build();
@@ -262,7 +270,7 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
     protected void spinCarousel() {
         robot.setBucketPower(0,0);
         robot.duckMech.setPosition(1);
-        sleep(3500);
+        sleep(4000);
         robot.duckMech.setPosition(.5);
     }
 

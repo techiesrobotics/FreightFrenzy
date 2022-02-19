@@ -155,16 +155,16 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
         telemetry.update();
 
         if (Constants.TARGET_LEVEL_BOTTOM == targetLevel) {
-            robot.setBucketPower(-.2,.2);
-            sleep(350);
+            robot.setBucketPower(-3,.3);
+            sleep(450);
             robot.setBucketPower(0,0);
             SlideMovementPID(100);
-            robot.horizontalSlide.setPosition(.8);
+            robot.horizontalSlide.setPosition(.65);
             sleep(1000);
             robot.setBucketPower(-.2,.2);
             sleep(800);
-            robot.setBucketPower(.2,-.2);
-            sleep(600);
+            robot.setBucketPower(.3,-.3);
+            sleep(650);
             robot.horizontalSlide.setPosition(.3);
             robot.slides.retractSlides();
 
@@ -248,18 +248,25 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
     }
 
     protected void goToRedAllianceHubFromStart(){
-        Pose2d startPose = new Pose2d(48,-75, Math.toRadians(0));
+        //for straight
+        /*Pose2d startPose = new Pose2d(48,-75, Math.toRadians(0));
         odoDriveTrain.setPoseEstimate(startPose);
         Trajectory goToAllianceHubFromStartDuckBlue = odoDriveTrain.trajectoryBuilder(startPose)
                 .lineToLinearHeading(new Pose2d(26, -50, Math.toRadians(0)))
                 .build();
-        odoDriveTrain.followTrajectory(goToAllianceHubFromStartDuckBlue);
+        odoDriveTrain.followTrajectory(goToAllianceHubFromStartDuckBlue);*/
+        Pose2d startPose = new Pose2d(48,-75, Math.toRadians(0));
+        odoDriveTrain.setPoseEstimate(startPose);
+        Trajectory goToAllianceHubFromStartDuckRed = odoDriveTrain.trajectoryBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(24, -61, Math.toRadians(-45)))
+                .build();
+        odoDriveTrain.followTrajectory(goToAllianceHubFromStartDuckRed);
     }
 
     protected void goToRedCarousel() {
-        Pose2d endPoseAllianceHub = new Pose2d(26,-50, Math.toRadians(0));
+        Pose2d endPoseAllianceHub = new Pose2d(24,-61, Math.toRadians(-45));
         Trajectory goToCarouselDuckBlue = odoDriveTrain.trajectoryBuilder(endPoseAllianceHub)
-                .lineToLinearHeading(new Pose2d(52, -130, Math.toRadians(355)))
+                .lineToLinearHeading(new Pose2d(55.5, -135, Math.toRadians(0)))
                 .build();
         odoDriveTrain.followTrajectory(goToCarouselDuckBlue);
     }
@@ -268,11 +275,11 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
         // Change the direction of the servo - AJ 2/5
         robot.setBucketPower(0,0);
         robot.duckMech.setPosition(0);
-        sleep(3000);
+        sleep(6000);
         robot.duckMech.setPosition(.5);
     }
     protected void parkInRedStorage(){
-        Trajectory parkRedStorage = odoDriveTrain.trajectoryBuilder(new Pose2d(52,-130,Math.toRadians(355)))
+        Trajectory parkRedStorage = odoDriveTrain.trajectoryBuilder(new Pose2d(54,-130,Math.toRadians(0)))
                 .lineToLinearHeading(new Pose2d(23, -130, Math.toRadians(90)))
                 .build();
         odoDriveTrain.followTrajectory(parkRedStorage);
@@ -281,10 +288,10 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
 
     protected void parkInRedWarehouse() {
        // sleep(10000);
-        Trajectory parkDuckBlue = odoDriveTrain.trajectoryBuilder(new Pose2d(53,-130,Math.toRadians(355)))
-                .lineToLinearHeading(new Pose2d(65, -100, Math.toRadians(80)))
+        Trajectory parkDuckBlue = odoDriveTrain.trajectoryBuilder(new Pose2d(53,-130,Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(65, -100, Math.toRadians(83)))
                 .build();
-        Trajectory parkDuckBlue2 = odoDriveTrain.trajectoryBuilder(new Pose2d(65,-30,Math.toRadians(80)))
+        Trajectory parkDuckBlue2 = odoDriveTrain.trajectoryBuilder(new Pose2d(65,-30,Math.toRadians(83)))
                 .forward(107)
                 .build();
         odoDriveTrain.followTrajectory(parkDuckBlue);

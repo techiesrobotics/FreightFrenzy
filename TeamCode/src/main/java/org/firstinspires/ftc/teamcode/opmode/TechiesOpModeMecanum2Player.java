@@ -110,14 +110,14 @@ public class TechiesOpModeMecanum2Player extends LinearOpMode {
             if (gamepad1.a) {
                 if (robotCore.horizontalSlide.getPosition() <= 0.55) {
                     robotCore.horizontalSlide.setPosition(.65);
-                    robotCore.setBucketPower(-.2,.2);
-                    sleep(650);
+                    robotCore.setBucketPower(-.3,.3);
+                    sleep(600);
                     robotCore.setBucketPower(.0, 0);
 
                 }
                 else{
                     robotCore.horizontalSlide.setPosition(.3);
-                    robotCore.setBucketPower(.25,-.25);
+                    robotCore.setBucketPower(.3,-.3);
                     sleep(700);
                     robotCore.setBucketPower(.0, 0);
                 }
