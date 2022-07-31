@@ -54,7 +54,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 public class TechiesDriveTrainHardware
 {
-    /* Public OpMode members. */
+    /* Public OpMode members. hi*/
     public DcMotor  leftDrive   = null;
     public DcMotor  rightDrive  = null;
     public DcMotor  leftBack    = null;
