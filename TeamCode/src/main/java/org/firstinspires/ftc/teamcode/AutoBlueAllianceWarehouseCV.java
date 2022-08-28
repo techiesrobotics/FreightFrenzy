@@ -63,7 +63,6 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Autonomous(name = "BlueAllianceWarehouseCV", group = "Concept")
 //@Disabled
 public class AutoBlueAllianceWarehouseCV extends LinearOpMode {
-    OpenCvCamera webcam;
     TechiesPipeline pipeline;
     protected static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
     protected static final String[] LABELS = {
@@ -88,10 +87,9 @@ public class AutoBlueAllianceWarehouseCV extends LinearOpMode {
     @Override
     public void runOpMode() {
         robot = new TechiesHardwareWithoutDriveTrain(hardwareMap);
+        pipeline= new TechiesPipeline();
         odoDriveTrain = new SampleMecanumDrive(hardwareMap);
-
-        setupCamera();
-
+        pipeline.setupCamera(hardwareMap);
         targetLevel = determineTargetLevel();
         telemetry.addData("Target Level", targetLevel);
         telemetry.addData(">", "Press Play to start op mode");
@@ -102,29 +100,7 @@ public class AutoBlueAllianceWarehouseCV extends LinearOpMode {
         doMissions(targetLevel);
     }
 
-    private void setupCamera() {
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        pipeline = new TechiesPipeline();
-        webcam.setPipeline(pipeline);
 
-        webcam.openCameraDeviceAsync(new OpenCvWebcam.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                webcam.startStreaming(960,720, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
-            }
-        });
-    }
 
     private int determineTargetLevel() {
         while (!opModeIsActive())
