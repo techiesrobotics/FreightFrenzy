@@ -151,13 +151,13 @@ public class AutoRedAllianceWarehouseCV extends LinearOpMode {
         telemetry.update();
 
         if (Constants.TARGET_LEVEL_BOTTOM == targetLevel) {
-            robot.setBucketPower(-.2,.2);
+            robot.setBucketPower(-.25,.25);
             sleep(400);
             robot.setBucketPower(0,0);
             SlideMovementPID(100);
             robot.horizontalSlide.setPosition(.65);
             sleep(1000);
-            robot.setBucketPower(-.2,.2);
+            robot.setBucketPower(-.25,.25);
             sleep(800);
             robot.setBucketPower(.25,-.25);
             sleep(600);
@@ -182,13 +182,13 @@ public class AutoRedAllianceWarehouseCV extends LinearOpMode {
 
 
         } else {
-            robot.setBucketPower(-.2,.2);
+            robot.setBucketPower(-.3,.3);
             sleep(350);
             robot.setBucketPower(0,0);
             SlideMovementPID(470);
             robot.horizontalSlide.setPosition(.75);
             sleep(1000);
-            robot.setBucketPower(-.2,.2);
+            robot.setBucketPower(-.25,.25);
             sleep(700);
             robot.setBucketPower(.2,-.2);
             sleep(150);
@@ -240,7 +240,7 @@ public class AutoRedAllianceWarehouseCV extends LinearOpMode {
         goToAllianceHubFromStart();
         dropPreloadFreight();
         cycleFreight();
-       // park();
+        park();
         //intake();
         //fromWarehouseToHub();
         //smallIntake();
@@ -249,10 +249,17 @@ public class AutoRedAllianceWarehouseCV extends LinearOpMode {
     }
 
     protected void goToAllianceHubFromStart(){
+        /* for straight
         Pose2d startPose = new Pose2d(48,-25, Math.toRadians(0));
         odoDriveTrain.setPoseEstimate(startPose);
         Trajectory goToAllianceHubFromStartWarehouseBlue = odoDriveTrain.trajectoryBuilder(startPose)
                 .lineToLinearHeading(new Pose2d(29, -49, Math.toRadians(0)))
+                .build();
+        odoDriveTrain.followTrajectory(goToAllianceHubFromStartWarehouseBlue);*/
+        Pose2d startPose = new Pose2d(48,-25, Math.toRadians(0));
+        odoDriveTrain.setPoseEstimate(startPose);
+        Trajectory goToAllianceHubFromStartWarehouseBlue = odoDriveTrain.trajectoryBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(24, -39, Math.toRadians(45)))
                 .build();
         odoDriveTrain.followTrajectory(goToAllianceHubFromStartWarehouseBlue);
     }
@@ -265,14 +272,13 @@ public class AutoRedAllianceWarehouseCV extends LinearOpMode {
         goToWarehouseFromAllianceHub();
 
         //parkInWarehouseFromAllianceHub();
-        park();
     }
     protected void goToWarehouseFromAllianceHub() {
-        Pose2d endPoseAllianceHub = new Pose2d(29,-49, Math.toRadians(0));
+        Pose2d endPoseAllianceHub = new Pose2d(24,-39, Math.toRadians(45));
         Trajectory goToWarehouseFromAllianceHub = odoDriveTrain.trajectoryBuilder(endPoseAllianceHub)
-                .lineToLinearHeading(new Pose2d(56, -30, Math.toRadians(85)))
+                .lineToLinearHeading(new Pose2d(60, -30, Math.toRadians(85)))
                 .build();
-        Trajectory goToWarehouseFromAllianceHub2 = odoDriveTrain.trajectoryBuilder(new Pose2d(-56,30,Math.toRadians(85)))
+        Trajectory goToWarehouseFromAllianceHub2 = odoDriveTrain.trajectoryBuilder(new Pose2d(60,-30,Math.toRadians(85)))
                 .forward(50)
                 .build();
         //TODO: need change so it doens't hit bar
@@ -332,7 +338,7 @@ public class AutoRedAllianceWarehouseCV extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(55, -15, Math.toRadians(95)))
                 .build();
         Trajectory fromWarehouseToHub2 = odoDriveTrain.trajectoryBuilder(new Pose2d(55,-15,Math.toRadians(95)))
-                .lineToLinearHeading(new Pose2d(31, -16, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(31, -30, Math.toRadians(0)))
                 .build();
         odoDriveTrain.followTrajectory(fromWarehouseToHub1);
         odoDriveTrain.followTrajectory(fromWarehouseToHub2);
@@ -424,7 +430,7 @@ class TechiesPipelineRedWarehouse extends OpenCvPipeline {
     int avg1, avg2, avg3;
 
     // Volatile since accessed by OpMode thread w/o synchronization
-    private volatile FreightLocation position = FreightLocation.ONE;
+    private volatile FreightLocation position = FreightLocation.TWO;
 
     /*
      * This function takes the RGB frame, converts to YCrCb,

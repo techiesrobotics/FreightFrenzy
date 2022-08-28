@@ -138,11 +138,11 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
             // Don't burn CPU cycles busy-looping in this sample
             sleep(40);
         }
-        if (TechiesRedCarouselPipeline.FreightLocation.ONE.equals(pipeline.getAnalysis())){
+         if (TechiesRedCarouselPipeline.FreightLocation.TWO.equals(pipeline.getAnalysis())) {
+             targetLevel = Constants.TARGET_LEVEL_MIDDLE;
+         }
+         else if (TechiesRedCarouselPipeline.FreightLocation.ONE.equals(pipeline.getAnalysis())){
             targetLevel =Constants.TARGET_LEVEL_BOTTOM;
-        }
-        else if (TechiesRedCarouselPipeline.FreightLocation.TWO.equals(pipeline.getAnalysis())){
-            targetLevel =Constants.TARGET_LEVEL_MIDDLE;
         }
         else if (TechiesRedCarouselPipeline.FreightLocation.THREE.equals(pipeline.getAnalysis())){
             targetLevel =Constants.TARGET_LEVEL_TOP;
@@ -173,7 +173,7 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
             robot.setBucketPower(-.2,.2);
             sleep(350);
             robot.setBucketPower(0,0);
-            SlideMovementPID(300);
+            SlideMovementPID(275);
             robot.horizontalSlide.setPosition(.8);
             sleep(1000);
             robot.setBucketPower(-.2,.2);
@@ -185,16 +185,16 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
             robot.slides.retractSlides();
 
         } else {
-            robot.setBucketPower(-.2,.2);
+            robot.setBucketPower(-.35,.35);
             sleep(350);
             robot.setBucketPower(0,0);
             SlideMovementPID(470);
             robot.horizontalSlide.setPosition(.8);
             sleep(1000);
-            robot.setBucketPower(-.2,.2);
+            robot.setBucketPower(-.3,.3);
             sleep(700);
             robot.setBucketPower(.25,-.25);
-            sleep(175);
+            sleep(500);
             robot.horizontalSlide.setPosition(.3);
             sleep(100);
             robot.slides.retractSlides();
@@ -243,8 +243,8 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
         dropPreloadFreight();
         goToRedCarousel();
         spinRedCarousel();
-        parkInRedWarehouse();
-        //parkInRedStorage();
+        //parkInRedWarehouse();
+        parkInRedStorage();
     }
 
     protected void goToRedAllianceHubFromStart(){
@@ -266,7 +266,7 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
     protected void goToRedCarousel() {
         Pose2d endPoseAllianceHub = new Pose2d(24,-61, Math.toRadians(-45));
         Trajectory goToCarouselDuckBlue = odoDriveTrain.trajectoryBuilder(endPoseAllianceHub)
-                .lineToLinearHeading(new Pose2d(55.5, -135, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(58, -130, Math.toRadians(0)))
                 .build();
         odoDriveTrain.followTrajectory(goToCarouselDuckBlue);
     }
@@ -279,8 +279,8 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
         robot.duckMech.setPosition(.5);
     }
     protected void parkInRedStorage(){
-        Trajectory parkRedStorage = odoDriveTrain.trajectoryBuilder(new Pose2d(54,-130,Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(23, -130, Math.toRadians(90)))
+        Trajectory parkRedStorage = odoDriveTrain.trajectoryBuilder(new Pose2d(58,-130,Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(28, -130, Math.toRadians(90)))
                 .build();
         odoDriveTrain.followTrajectory(parkRedStorage);
     }
@@ -288,7 +288,7 @@ public class AutoRedAllianceCarouselCV extends LinearOpMode {
 
     protected void parkInRedWarehouse() {
        // sleep(10000);
-        Trajectory parkDuckBlue = odoDriveTrain.trajectoryBuilder(new Pose2d(53,-130,Math.toRadians(0)))
+        Trajectory parkDuckBlue = odoDriveTrain.trajectoryBuilder(new Pose2d(56,-130,Math.toRadians(0)))
                 .lineToLinearHeading(new Pose2d(65, -100, Math.toRadians(83)))
                 .build();
         Trajectory parkDuckBlue2 = odoDriveTrain.trajectoryBuilder(new Pose2d(65,-30,Math.toRadians(83)))
@@ -373,7 +373,7 @@ class TechiesRedCarouselPipeline extends OpenCvPipeline {
     int avg1, avg2, avg3;
 
     // Volatile since accessed by OpMode thread w/o synchronization
-    private volatile FreightLocation position = FreightLocation.ONE;
+    private volatile FreightLocation position = FreightLocation.TWO;
 
     /*
      * This function takes the RGB frame, converts to YCrCb,

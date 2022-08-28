@@ -153,25 +153,25 @@ public class TechiesOpModeMecanum2Player extends LinearOpMode {
             }
 
             if (gamepad1.dpad_up) {
-                robotCore.setBucketPower(.45, -.45);
+                robotCore.setBucketPower(.68, -.68);
             } else {
                 robotCore.setBucketPower(0,0);
             }
 
             if (gamepad1.dpad_down) {
-                robotCore.setBucketPower(-.45, .45);
+                robotCore.setBucketPower(-.68, .68);
             } else {
                 robotCore.setBucketPower(0,0);
             }
 
             if (gamepad1.right_trigger>.01) {
                 robotCore.duckMech.setPosition(1);
-                sleep(2500);
+                sleep(3000);
                 robotCore.duckMech.setPosition(.5);
             }
             if (gamepad1.left_trigger>.01) {
                 robotCore.duckMech.setPosition(-1);
-                sleep(2500);
+                sleep(3000);
                 robotCore.duckMech.setPosition(.5);
             }
             if (gamepad2.dpad_up) {

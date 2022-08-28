@@ -262,7 +262,9 @@ public abstract class ZZZAutoParentOdo extends LinearOpMode {
     {
             int targetZone = LEVEL_ZONE_DEFAULT;
           // if(opModeIsActive()) {
+            telemetry.addData("", "before init");
                 while (!opModeIsActive()) {
+                    telemetry.addData("", "in init");
                     if (tfod != null) {
                         // getUpdatedRecognitions() will return null if no new information is available since
                         // the last time that call was made.
@@ -302,6 +304,8 @@ public abstract class ZZZAutoParentOdo extends LinearOpMode {
                             }
                             telemetry.update();
                         }
+                    }else{
+                        telemetry.addData("", "after init");
                     }
                     }
                     return targetZone;
@@ -349,7 +353,7 @@ public abstract class ZZZAutoParentOdo extends LinearOpMode {
                       telemetry.addData(String.format("  Level: "), targetZone);
 
                   }
-                  //  telemetry.update();
+                    telemetry.update();
 
 
               } else {

@@ -38,9 +38,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 /**
@@ -53,24 +53,19 @@ import org.openftc.easyopencv.OpenCvWebcam;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "BlueAllianceCarouselCV", group = "Concept")
+@Autonomous(name = "KLAutoTestCV", group = "Concept")
 //@Disabled
-public class AutoBlueAllianceCarouselCV extends LinearOpMode {
+public class KLAutoTestCV extends LinearOpMode {
     OpenCvCamera webcam;
     TechiesPipeline pipeline;
     protected static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
-    protected static final String[] LABELS = {
-      "Ball",
-      "Cube",
-      "Duck",
-      "Marker"
-    };
 
-    int targetLevel = Constants.TARGET_LEVEL_DEFAULT;
+    TechiesPipeline.FreightLocation targetLevel = TechiesPipeline.FreightLocation.NOTFOUND;
 
 
     SampleMecanumDrive odoDriveTrain;
     TechiesHardwareWithoutDriveTrain robot ;
+    VisionHelper visionHelper;
     double currentVelocity;
     double maxVelocity = 0.0;
     double currentPos;
@@ -80,11 +75,14 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        visionHelper = new VisionHelper(hardwareMap, "Webcam 1",telemetry);
         robot = new TechiesHardwareWithoutDriveTrain(hardwareMap);
         odoDriveTrain = new SampleMecanumDrive(hardwareMap);
 
-        setupCamera();
+      //  pipeline = new TechiesPipeline();
+     //   visionHelper.setUpCamera(hardwareMap, pipeline);
 
+        setupCamera();
         targetLevel = determineTargetLevel();
         telemetry.addData("Target Level", targetLevel);
         telemetry.addData(">", "Press Play to start op mode");
@@ -92,11 +90,12 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
 
         waitForStart();
 
-        //doMissions(targetLevel);
+       // doMissions(targetLevel);
     }
 
     private void setupCamera() {
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+        "cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         pipeline = new TechiesPipeline();
         webcam.setPipeline(pipeline);
@@ -106,40 +105,29 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
             @Override
             public void onOpened()
             {
+                System.out.println("onOpened, camera opened");
                 webcam.startStreaming(960,720, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
             public void onError(int errorCode)
             {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
+                System.out.println("error, camera could not be opened");
+                 // This will be called if the camera could not be opened
+
             }
         });
     }
 
-    private int determineTargetLevel() {
+    private TechiesPipeline.FreightLocation determineTargetLevel() {
         while (!opModeIsActive())
         {
-            telemetry.addData("Freight Location: ", pipeline.getPosition());
-            telemetry.update();
+            telemetry.addData("Freight target level: ", pipeline.getTargetLevel());
+           // telemetry.update();
             // Don't burn CPU cycles busy-looping in this sample
             sleep(40);
         }
-        targetLevel = pipeline.getTargetLevel();
-        /*
-        if (TechiesPipeline.FreightLocation.ONE.equals(pipeline.getPosition())){
-            targetLevel =Constants.TARGET_LEVEL_BOTTOM;
-        }
-        else if (TechiesPipeline.FreightLocation.TWO.equals(pipeline.getPosition())){
-            targetLevel =Constants.TARGET_LEVEL_MIDDLE;
-        }
-        else if (TechiesPipeline.FreightLocation.THREE.equals(pipeline.getPosition())){
-            targetLevel =Constants.TARGET_LEVEL_TOP;
-        }
-
-         */
+        targetLevel = pipeline.getPosition();
         return targetLevel;
     }
 
@@ -147,7 +135,7 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
         telemetry.addData("dropPreloadFreight", "dropPreloadFreight");
         telemetry.update();
 
-        if (Constants.TARGET_LEVEL_BOTTOM == targetLevel) {
+        if (Constants.TARGET_LEVEL_BOTTOM == pipeline.getTargetLevel()) {
             robot.setBucketPower(-.3,.3);
             sleep(400);
             robot.setBucketPower(0,0);
@@ -162,7 +150,7 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
             robot.slides.retractSlides();
 
 
-        } else if (Constants.TARGET_LEVEL_MIDDLE == targetLevel) {
+        } else if (Constants.TARGET_LEVEL_MIDDLE == pipeline.getTargetLevel()) {
             robot.setBucketPower(-.2,.2);
             sleep(350);
             robot.setBucketPower(0,0);
@@ -240,6 +228,14 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
     }
 
     protected void goToAllianceHubFromStart(){
+        /* for straight
+        Pose2d startPose = new Pose2d(-48,-75, Math.toRadians(180));
+        odoDriveTrain.setPoseEstimate(startPose);
+        Trajectory goToAllianceHubFromStartDuckBlue = odoDriveTrain.trajectoryBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(-27, -50.5, Math.toRadians(180)))
+                .build();
+        odoDriveTrain.followTrajectory(goToAllianceHubFromStartDuckBlue);
+        */
         Pose2d startPose = new Pose2d(-48,-75, Math.toRadians(180));
         odoDriveTrain.setPoseEstimate(startPose);
         Trajectory goToAllianceHubFromStartDuckBlue = odoDriveTrain.trajectoryBuilder(startPose)
@@ -283,3 +279,4 @@ public class AutoBlueAllianceCarouselCV extends LinearOpMode {
 
 
 }
+
